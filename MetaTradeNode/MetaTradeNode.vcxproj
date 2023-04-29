@@ -147,6 +147,7 @@
     <ClCompile Include="BlockChainService.cpp" />
     <ClCompile Include="cJSON\cJSON.c" />
     <ClCompile Include="CryptoUtils.cpp" />
+    <ClCompile Include="crypto\rmd160.c" />
     <ClCompile Include="example.cpp" />
     <ClCompile Include="MetaTradeClient.cpp" />
     <ClCompile Include="StompConst.cpp" />

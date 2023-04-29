@@ -42,6 +42,9 @@
     <ClCompile Include="CryptoUtils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="crypto\rmd160.c">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaTradeClient.h">

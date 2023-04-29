@@ -1,4 +1,8 @@
 #include <crypto/picosha2.h>
+#include <crypto/rmd160.h>
+#include <stddef.h>
+#include <climits>
+#include <cstdio>
 #include <secp256k1/secp256k1.h>
 #if defined(_WIN32)
 /*
@@ -18,21 +22,28 @@
 #error "Couldn't identify the OS"
 #endif
 
-#include <stddef.h>
-#include <limits.h>
-#include <stdio.h>
-
 #pragma comment(lib , "secp256k1.lib")
+
+namespace metatradenode {
+	extern const char* NETWORK_VERSION;
+}
 
 class CryptoUtils {
 	/*
 		Private key: random --> sha256(random)
 	*/
 public:
+	static std::string GetSha256(std::string src);
 	static std::string GetSha256(std::string& src);
 	static std::string GetSha256(const char* src);
 	static std::string PrivateKey2Address(unsigned char* src);
 	static std::string PrivateKey2Address(std::string& src);
+	static bool isValidAddress(std::string& address);
+	static bool isValidAddress(const char* address);
 private:
+	static bool IsSpace(char c) { return c == ' '; };
+	static std::string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend);
+	static bool DecodeBase58(const char* psz, std::vector<unsigned char>& vch, int max_ret_len);
 	static int fill_random(unsigned char* data, size_t size);
+	static unsigned char hex2byte(char c);
 };

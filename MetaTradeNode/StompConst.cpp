@@ -12,4 +12,6 @@ namespace metatradenode {
 	const char* POST_PROOF = "/meta-trade/post/proof";
 	const char* POST_AGREE = "/meta-trade/post/agree";
 	const char* POST_SYNC = "/meta-trade/post/sync";
+
+	const char* NETWORK_VERSION = "00";
 }
