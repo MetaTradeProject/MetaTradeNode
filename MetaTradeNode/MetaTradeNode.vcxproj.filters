@@ -39,6 +39,9 @@
     <ClCompile Include="BlockChainImpl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CryptoUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaTradeClient.h">
@@ -48,6 +51,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="BlockChainImpl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CryptoUtils.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

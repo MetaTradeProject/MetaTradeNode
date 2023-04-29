@@ -145,6 +145,7 @@
     <ClCompile Include="BlockChainImpl.cpp" />
     <ClCompile Include="BlockChainService.cpp" />
     <ClCompile Include="cJSON\cJSON.c" />
+    <ClCompile Include="CryptoUtils.cpp" />
     <ClCompile Include="example.cpp" />
     <ClCompile Include="MetaTradeClient.cpp" />
     <ClCompile Include="StompConst.cpp" />
@@ -154,6 +155,7 @@
   <ItemGroup>
     <ClInclude Include="BlockChainImpl.h" />
     <ClInclude Include="BlockChainService.h" />
+    <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="MetaTradeClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
