@@ -10,5 +10,6 @@ int main() {
 	block_chain.RegisterClient(&client);
 	
 	client.RunSync();*/
-	std::cout << CryptoUtils::GetSha256("123");
+	std::string str = "a665a45920422f9d417e4867efdc2ef1";
+	std::cout << CryptoUtils::PrivateKey2Address(str);
 }
