@@ -27,7 +27,7 @@ namespace metatradenode {
 			SUB_ALL,
 			FINISHED
 		};
-		MetaTradeClient(std::string address) : _address(address), _status(Status::BORN), _service(nullptr), _async_thread(nullptr) {};
+		MetaTradeClient(const char* address) : _address(address), _status(Status::BORN), _service(nullptr), _async_thread(nullptr) {};
 		~MetaTradeClient() {
 			if (_async_thread != nullptr) {
 				_async_thread->join();
