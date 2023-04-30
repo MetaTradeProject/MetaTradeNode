@@ -48,4 +48,32 @@
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\cJSON.dll">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="lib\libWebStomp++.dll">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="lib\rmd160.dll">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="lib\secp256k1.dll">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\cJSON.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+    <Library Include="lib\libWebStomp++.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+    <Library Include="lib\rmd160.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+    <Library Include="lib\secp256k1.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+  </ItemGroup>
 </Project>

@@ -156,6 +156,18 @@
     <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="MetaTradeClient.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="lib\cJSON.dll" />
+    <None Include="lib\libWebStomp++.dll" />
+    <None Include="lib\rmd160.dll" />
+    <None Include="lib\secp256k1.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\cJSON.lib" />
+    <Library Include="lib\libWebStomp++.lib" />
+    <Library Include="lib\rmd160.lib" />
+    <Library Include="lib\secp256k1.lib" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
