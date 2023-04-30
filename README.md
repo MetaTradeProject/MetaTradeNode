@@ -1,7 +1,14 @@
 # MetaTrade Node
 `MetaTrade Gateway`网关服务的本地客户端实现
 # 目录
+## 项目依赖
+- [libWebStomp++](https://github.com/Freesia810/WebStomppp)：提供客户端的`Stomp`服务
+- [rmd160](https://homes.esat.kuleuven.be/~bosselae/ripemd160/)：实现`RIPEMD-160`哈希算法加密
+- [picosha2](https://github.com/okdshin/PicoSHA2)：提供SHA-256哈希算法
+- [cJSON](https://github.com/DaveGamble/cJSON)：提供轻量的`json`序列化与反序列化服务
+- [secp256k1](https://github.com/bitcoin-core/secp256k1)：提供区块链公钥和地址生成的`ECC`算法和公钥压缩算法
 
+程序运行时依赖这些`dll`，请将它们放在`exe`文件的同一目录下，否则程序无法正常运行
 ## 安全验证
 ## Stomp服务
 与网关之间的通信交互由`Stomp`协议实现，该项目依赖[WebStomp++](https://github.com/Freesia810/WebStomppp)，在此库的基础上进行了封装，整体上由`MetaTradeClient`提供服务
