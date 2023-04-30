@@ -1,5 +1,5 @@
 #pragma once
-#include <stomp/WebStompType.h>
+#include <webstomp++/WebStompType.h>
 #include "MetaTradeClient.h"
 
 namespace metatradenode {
@@ -9,12 +9,12 @@ namespace metatradenode {
 		void RegisterClient(metatradenode::MetaTradeClient* client);
 		friend class metatradenode::MetaTradeClient;
 	protected:
-		virtual void Init(webstomppp::StompFrame& msg);
-		virtual void onTrade(webstomppp::StompFrame& msg) = 0;
-		virtual void onSpawn(webstomppp::StompFrame& msg) = 0;
-		virtual void onJudge(webstomppp::StompFrame& msg) = 0;
-		virtual void onSemiSync(webstomppp::StompFrame& msg) = 0;
-		virtual void onSync(webstomppp::StompFrame& msg) = 0;
+		virtual void Init(webstomppp::StompCallbackMsg msg);
+		virtual void onTrade(webstomppp::StompCallbackMsg msg) = 0;
+		virtual void onSpawn(webstomppp::StompCallbackMsg msg) = 0;
+		virtual void onJudge(webstomppp::StompCallbackMsg msg) = 0;
+		virtual void onSemiSync(webstomppp::StompCallbackMsg msg) = 0;
+		virtual void onSync(webstomppp::StompCallbackMsg msg) = 0;
 		metatradenode::MetaTradeClient* _client;
 		BlockChainService() :_client(nullptr) {};
 	};

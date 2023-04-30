@@ -14,10 +14,10 @@
 namespace webstomppp {
 	using client = websocketpp::client<websocketpp::config::asio_client>;
 	using message_ptr = websocketpp::config::asio_client::message_type::ptr;
-	using callback_func = std::function<void(StompFrame&)>;
+	using callback_func = std::function<void(StompCallbackMsg)>;
 	using stomp_client_ptr = std::shared_ptr<WebStompClient>;
 
-	class WebStompClient {
+	class __declspec(dllexport) WebStompClient {
 		client _ws_client;
 		websocketpp::lib::error_code _ec{};
 		client::connection_ptr _con{};
@@ -39,7 +39,7 @@ namespace webstomppp {
 		void Run();
 		void Subscribe(const char* destination, webstomppp::callback_func callback);
 		void Unsubscribe(const char* destination);
-		void Send(StompSendFrame& send_msg);
+		void Send(const char* raw_str);
 		virtual void OnConnected() {};
 		virtual void OnDisconnected() {};
 	};

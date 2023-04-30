@@ -5,11 +5,11 @@ class BlockChainImpl : public metatradenode::BlockChainService
 public:
 	BlockChainImpl():metatradenode::BlockChainService() {};
 private:
-	virtual void Init(webstomppp::StompFrame& msg);
-	virtual void onTrade(webstomppp::StompFrame& msg) override;
-	virtual void onSpawn(webstomppp::StompFrame& msg) override;
-	virtual void onJudge(webstomppp::StompFrame& msg) override;
-	virtual void onSemiSync(webstomppp::StompFrame& msg) override;
-	virtual void onSync(webstomppp::StompFrame& msg) override;
+	virtual void Init(webstomppp::StompCallbackMsg msg);
+	virtual void onTrade(webstomppp::StompCallbackMsg msg) override;
+	virtual void onSpawn(webstomppp::StompCallbackMsg msg) override;
+	virtual void onJudge(webstomppp::StompCallbackMsg msg) override;
+	virtual void onSemiSync(webstomppp::StompCallbackMsg msg) override;
+	virtual void onSync(webstomppp::StompCallbackMsg msg) override;
 };
 

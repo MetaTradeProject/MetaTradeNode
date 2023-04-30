@@ -1,32 +1,32 @@
 #include "BlockChainImpl.h"
 
-void BlockChainImpl::Init(webstomppp::StompFrame& msg)
+void BlockChainImpl::Init(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "init\n" << msg.body << std::endl;
 	BlockChainService::Init(msg);
 }
 
-void BlockChainImpl::onTrade(webstomppp::StompFrame& msg)
+void BlockChainImpl::onTrade(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "trade\n";
 }
 
-void BlockChainImpl::onSpawn(webstomppp::StompFrame& msg)
+void BlockChainImpl::onSpawn(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "spawn\n";
 }
 
-void BlockChainImpl::onJudge(webstomppp::StompFrame& msg)
+void BlockChainImpl::onJudge(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "judge\n";
 }
 
-void BlockChainImpl::onSemiSync(webstomppp::StompFrame& msg)
+void BlockChainImpl::onSemiSync(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "semi\n";
 }
 
-void BlockChainImpl::onSync(webstomppp::StompFrame& msg)
+void BlockChainImpl::onSync(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "sync\n";
 }

@@ -1,5 +1,6 @@
 #pragma once
-#include <stomp/WebStompClient.h>
+#include <webstomp++/WebStompClient.h>
+#pragma comment(lib , "libWebStomp++.lib")
 
 namespace metatradenode {
 	extern const char* STOMP_PATH;

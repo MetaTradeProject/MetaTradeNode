@@ -1,7 +1,7 @@
 #include "BlockChainService.h"
 #include "MetaTradeClient.h"
 
-void metatradenode::BlockChainService::Init(webstomppp::StompFrame& msg)
+void metatradenode::BlockChainService::Init(webstomppp::StompCallbackMsg msg)
 {
 	_client->RegisterSubscribe();
 }

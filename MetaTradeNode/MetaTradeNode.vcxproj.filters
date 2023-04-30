@@ -33,12 +33,6 @@
     <ClCompile Include="CryptoUtils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="stomp\WebStompClient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="stomp\WebStompType.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaTradeClient.h">
@@ -51,12 +45,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CryptoUtils.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="WebStompClient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="WebStompType.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

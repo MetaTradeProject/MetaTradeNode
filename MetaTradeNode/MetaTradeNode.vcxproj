@@ -149,16 +149,12 @@
     <ClCompile Include="example.cpp" />
     <ClCompile Include="MetaTradeClient.cpp" />
     <ClCompile Include="StompConst.cpp" />
-    <ClCompile Include="stomp\WebStompClient.cpp" />
-    <ClCompile Include="stomp\WebStompType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockChainImpl.h" />
     <ClInclude Include="BlockChainService.h" />
     <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="MetaTradeClient.h" />
-    <ClInclude Include="WebStompClient.h" />
-    <ClInclude Include="WebStompType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
