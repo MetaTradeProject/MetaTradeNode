@@ -34,11 +34,11 @@ namespace webstomppp {
 	public:
 		WebStompClient();
 		~WebStompClient();
-		void Connect(std::string uri);
+		void Connect(const char* uri);
 		void Disconnect();
 		void Run();
-		void Subscribe(std::string destination, webstomppp::callback_func callback);
-		void Unsubscribe(std::string destination);
+		void Subscribe(const char* destination, webstomppp::callback_func callback);
+		void Unsubscribe(const char* destination);
 		void Send(StompSendFrame& send_msg);
 		virtual void OnConnected() {};
 		virtual void OnDisconnected() {};

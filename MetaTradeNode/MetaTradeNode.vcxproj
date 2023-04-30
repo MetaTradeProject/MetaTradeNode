@@ -157,6 +157,8 @@
     <ClInclude Include="BlockChainService.h" />
     <ClInclude Include="CryptoUtils.h" />
     <ClInclude Include="MetaTradeClient.h" />
+    <ClInclude Include="WebStompClient.h" />
+    <ClInclude Include="WebStompType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

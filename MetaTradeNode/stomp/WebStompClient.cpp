@@ -7,7 +7,7 @@ void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl
 	{
 	case websocketpp::frame::opcode::TEXT:
 		{
-			StompFrame stomp_msg(msg->get_payload());
+			StompFrame stomp_msg(msg->get_payload().c_str());
 			switch (stomp_msg.type)
 			{
 			case StompCommandType::CONNECTED:
@@ -19,7 +19,7 @@ void webstomppp::WebStompClient::_message_dispatcher(websocketpp::connection_hdl
 				if (it != _topic_callback_map.end()) {
 					(it->second)(stomp_msg);
 
-					StompAckFrame frame(stomp_msg.header["message-id"]);
+					StompAckFrame frame(stomp_msg.header["message-id"].c_str());
 					char* buf = nullptr;
 					size_t len = 0;
 					frame.toByteFrame(buf, len);
@@ -51,7 +51,7 @@ void webstomppp::WebStompClient::_on_open(client* c, websocketpp::connection_hdl
 	auto tmp = _uri.substr(5);
 	auto host = tmp.substr(0, tmp.find_first_of('/'));
 
-	StompConnectFrame frame(host);
+	StompConnectFrame frame(host.c_str());
 	char* buf = nullptr;
 	size_t len = 0;
 	frame.toByteFrame(buf, len);
@@ -75,7 +75,7 @@ webstomppp::WebStompClient::~WebStompClient() {
 	}
 }
 
-void webstomppp::WebStompClient::Connect(std::string uri)
+void webstomppp::WebStompClient::Connect(const char* uri)
 {
 	_uri = uri;
 	_con = _ws_client.get_connection(uri, _ec);
@@ -98,7 +98,7 @@ void webstomppp::WebStompClient::Run()
 	_ws_client.run();
 }
 
-void webstomppp::WebStompClient::Subscribe(std::string destination, webstomppp::callback_func callback){
+void webstomppp::WebStompClient::Subscribe(const char* destination, webstomppp::callback_func callback){
 	auto it = this->_topic_id_map.find(destination);
 	if (it != _topic_id_map.end()) return;
 
@@ -111,7 +111,7 @@ void webstomppp::WebStompClient::Subscribe(std::string destination, webstomppp::
 	_topic_id_map.insert(std::make_pair(destination, subscribe_id_gen++));
 	_topic_callback_map.insert(std::make_pair(destination, callback));
 }
-void webstomppp::WebStompClient::Unsubscribe(std::string destination)
+void webstomppp::WebStompClient::Unsubscribe(const char* destination)
 {
 	auto it = this->_topic_id_map.find(destination);
 	if (it != _topic_id_map.end()) return;
