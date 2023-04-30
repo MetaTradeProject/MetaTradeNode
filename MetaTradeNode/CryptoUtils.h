@@ -14,6 +14,8 @@
 #undef WIN32_NO_STATUS
 #include <ntstatus.h>
 #include <bcrypt.h>
+#pragma comment(lib , "secp256k1.lib")
+#pragma comment(lib , "rmd160.lib")
 #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
 #include <sys/random.h>
 #elif defined(__OpenBSD__)
@@ -21,8 +23,6 @@
 #else
 #error "Couldn't identify the OS"
 #endif
-
-#pragma comment(lib , "secp256k1.lib")
 
 namespace metatradenode {
 	extern const char* NETWORK_VERSION;
