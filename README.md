@@ -64,6 +64,7 @@
 - `virtual Init(msg)`：客户端收到网关的`Init`消息时，会回调该接口，在该接口中，应该实现区块链数据结构的初始化等工作
 注：在`Service`中该函数已经实现，请子类`override`时务必在最后调用抽象类的该函数.
 
+- `virtual Stop()`: 断开连接时回调接口，进行数据结构的存储和析构工作
 - `virtual onTrade(msg)`：客户端收到网关的`Trade`消息时，会进行回调
 - `virtual onSpawn(msg)`：客户端收到网关的`Spawn`消息时，会进行回调
 - `virtual onJudge(msg)`：客户端收到网关的`Judge`消息时，会进行回调
