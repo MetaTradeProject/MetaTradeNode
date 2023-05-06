@@ -21,15 +21,6 @@ static const int8_t mapBase58[256] = {
     -1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
 };
 
-std::string CryptoUtils::GetSha256(std::string src)
-{
-    return picosha2::hash256_hex_string(src);
-}
-
-std::string CryptoUtils::GetSha256(std::string& src) {
-    return picosha2::hash256_hex_string(src);
-}
-
 std::string CryptoUtils::GetSha256(const char* src) {
     return picosha2::hash256_hex_string(std::string(src));
 }
@@ -94,7 +85,7 @@ std::string CryptoUtils::PrivateKey2Address(unsigned char* src) {
         strcat_s(data, c);
     }
 
-    std::string check = GetSha256(GetSha256(data)).substr(0, 8);
+    std::string check = GetSha256(GetSha256(data).c_str()).substr(0, 8);
 
     unsigned char cat[25]{};
     cat[0] = (hex2byte(metatradenode::NETWORK_VERSION[0]) << 4) | hex2byte(metatradenode::NETWORK_VERSION[1]);
@@ -109,9 +100,9 @@ std::string CryptoUtils::PrivateKey2Address(unsigned char* src) {
     return EncodeBase58(std::begin(cat), std::end(cat));
 }
 
-std::string CryptoUtils::PrivateKey2Address(std::string& src) {
-    unsigned char seckey[32];
-    if (src.size() != 64) {
+std::string CryptoUtils::PrivateKey2Address(const char* src) {
+    unsigned char seckey[32]{};
+    if (strlen(src) != 64) {
         return "";
     }
     else {
@@ -148,7 +139,7 @@ bool CryptoUtils::isValidAddress(const char* address)
             strcat_s(data, c);
         }
 
-        std::string judge = GetSha256(GetSha256(data)).substr(0, 8);
+        std::string judge = GetSha256(GetSha256(data).c_str()).substr(0, 8);
         unsigned char a = (hex2byte(judge[0]) << 4) | hex2byte(judge[1]);
         unsigned char b = (hex2byte(judge[2]) << 4) | hex2byte(judge[3]);
         unsigned char c = (hex2byte(judge[4]) << 4) | hex2byte(judge[5]);
@@ -159,11 +150,6 @@ bool CryptoUtils::isValidAddress(const char* address)
         }
     }
     return false;
-}
-
-bool CryptoUtils::isValidAddress(std::string& address)
-{
-    return isValidAddress(address.c_str());
 }
 
 std::string CryptoUtils::EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)

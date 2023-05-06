@@ -11,5 +11,6 @@ private:
 	virtual void onJudge(webstomppp::StompCallbackMsg msg) override;
 	virtual void onSemiSync(webstomppp::StompCallbackMsg msg) override;
 	virtual void onSync(webstomppp::StompCallbackMsg msg) override;
+	virtual void Stop() override;
 };
 

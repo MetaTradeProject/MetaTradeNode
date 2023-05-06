@@ -6,6 +6,10 @@ void metatradenode::MetaTradeClient::OnConnected() {
 	_status = Status::SEND_INIT;
 }
 
+void metatradenode::MetaTradeClient::OnDisconnected() {
+	_service->Stop();
+}
+
 void metatradenode::MetaTradeClient::RunSync() {
 	Connect(metatradenode::STOMP_PATH);
 	this->Run();

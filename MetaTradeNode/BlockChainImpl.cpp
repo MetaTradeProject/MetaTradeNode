@@ -30,3 +30,7 @@ void BlockChainImpl::onSync(webstomppp::StompCallbackMsg msg)
 {
 	std::cout << "sync\n";
 }
+
+void BlockChainImpl::Stop() {
+
+}

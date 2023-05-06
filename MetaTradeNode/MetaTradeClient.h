@@ -17,7 +17,7 @@ namespace metatradenode {
 
 	class BlockChainService;
 
-	class MetaTradeClient : protected webstomppp::WebStompClient
+	class MetaTradeClient : public webstomppp::WebStompClient
 	{
 	public:
 		enum class Status {
@@ -36,7 +36,7 @@ namespace metatradenode {
 	private:
 		std::thread* _async_thread;
 		void OnConnected() override;
-		void OnDisconnected() override { _service->Stop(); };
+		void OnDisconnected() override;
 		void RegisterSubscribe();
 		std::string _wallet_address;
 		metatradenode::BlockChainService* _service;

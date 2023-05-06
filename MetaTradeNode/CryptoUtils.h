@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <climits>
 #include <cstdio>
+#include <cstring>
 #include <secp256k1/secp256k1.h>
 #if defined(_WIN32)
 /*
@@ -33,12 +34,9 @@ class CryptoUtils {
 		Private key: random --> sha256(random)
 	*/
 public:
-	static std::string GetSha256(std::string src);
-	static std::string GetSha256(std::string& src);
 	static std::string GetSha256(const char* src);
 	static std::string PrivateKey2Address(unsigned char* src);
-	static std::string PrivateKey2Address(std::string& src);
-	static bool isValidAddress(std::string& address);
+	static std::string PrivateKey2Address(const char* src);
 	static bool isValidAddress(const char* address);
 private:
 	static bool IsSpace(char c) { return c == ' '; };

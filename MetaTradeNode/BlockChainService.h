@@ -1,6 +1,7 @@
 #pragma once
 #include <webstomp++/WebStompType.h>
 #include "MetaTradeClient.h"
+#pragma comment(lib , "cJSON.lib")
 
 namespace metatradenode {
 	class BlockChainService

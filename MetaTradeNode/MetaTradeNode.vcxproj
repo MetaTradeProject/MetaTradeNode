@@ -144,7 +144,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BlockChainImpl.cpp" />
-    <ClCompile Include="BlockChainService.cpp" />
     <ClCompile Include="CryptoUtils.cpp" />
     <ClCompile Include="example.cpp" />
     <ClCompile Include="MetaTradeClient.cpp" />
