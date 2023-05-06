@@ -27,23 +27,18 @@ namespace metatradenode {
 			SUB_ALL,
 			FINISHED
 		};
-		MetaTradeClient(const char* address) : _address(address), _status(Status::BORN), _service(nullptr), _async_thread(nullptr) {};
-		~MetaTradeClient() {
-			if (_async_thread != nullptr) {
-				_async_thread->join();
-				delete _async_thread;
-			}
-		}
-		void RegisterService(metatradenode::BlockChainService* service);
+		MetaTradeClient(const char* wallet_address) : _wallet_address(wallet_address), _status(Status::BORN), _service(nullptr), _async_thread(nullptr) {};
+		~MetaTradeClient();
+		void RegisterService(metatradenode::BlockChainService* service) { this->_service = service; };
 		void RunSync();
 		void RunAsync();
 		friend class BlockChainService;
 	private:
 		std::thread* _async_thread;
 		void OnConnected() override;
-		void OnDisconnected() override;
+		void OnDisconnected() override { _service->Stop(); };
 		void RegisterSubscribe();
-		std::string _address;
+		std::string _wallet_address;
 		metatradenode::BlockChainService* _service;
 		Status _status;
 	};
