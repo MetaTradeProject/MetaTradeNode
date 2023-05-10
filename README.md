@@ -7,6 +7,10 @@
 
 [验证钱包地址](#验证钱包地址)
 
+[交易签名](#交易签名)
+
+[交易验证](#交易验证)
+
 [Stomp服务](#Stomp服务)
 
 [Blockchain服务接口](#Blockchain服务接口)
@@ -39,6 +43,9 @@
 - 将去掉校验值后的原始地址数据进行两次`SHA-256`加密，获得摘要
 - 比较获得摘要的前四个字节和校验和是否相同，即可验证钱包地址的真实性
 
+### 交易签名
+
+### 交易验证
 ## Stomp服务
 与网关之间的通信交互由`Stomp`协议实现，该项目依赖[WebStomp++](https://github.com/Freesia810/WebStomppp)，在此库的基础上进行了封装，整体上由`MetaTradeClient`提供服务
 ### MetaTrade Client
