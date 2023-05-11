@@ -167,7 +167,7 @@ bool CryptoUtils::isValidAddress(const char* address)
     return false;
 }
 
-bool CryptoUtils::isValidTrade(const char* trade_hash, const char* signature, const char* sender_public_key)
+bool CryptoUtils::isValidSignature(const char* trade_hash, const char* signature, const char* sender_public_key)
 {
     secp256k1_ecdsa_signature sig;
     secp256k1_pubkey pubkey;

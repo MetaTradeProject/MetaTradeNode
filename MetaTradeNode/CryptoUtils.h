@@ -37,7 +37,7 @@ public:
 	static std::string GetSha256(const char* src);
 	static void GeneratePublic(const char* private_key, char*& public_key, char*& address);
 	static bool isValidAddress(const char* address);
-	static bool isValidTrade(const char* trade_hash, const char* signature, const char* sender_public_key);
+	static bool isValidSignature(const char* trade_hash, const char* signature, const char* sender_public_key);
 	static void SignTrade(const char* trade_hash, const char* private_key, char*& signature);
 private:
 	static bool IsSpace(char c) { return c == ' '; };
