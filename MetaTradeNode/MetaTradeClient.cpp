@@ -2,12 +2,13 @@
 #include "BlockChainService.h"
 
 void metatradenode::MetaTradeClient::OnConnected() {
-	this->Subscribe(SUB_INIT, std::bind(&BlockChainService::Init, _service, std::placeholders::_1));
+	std::string sub_str = std::string(SUB_INIT).append("/").append(std::to_string(_local_service->getStartIndex()));
+	this->Subscribe(sub_str.c_str(), std::bind(&BlockchainService::Init, _bc_service, std::placeholders::_1));
 	_status = Status::SEND_INIT;
 }
 
 void metatradenode::MetaTradeClient::OnDisconnected() {
-	_service->Stop();
+	_bc_service->Stop();
 }
 
 void metatradenode::MetaTradeClient::RunSync() {
@@ -21,11 +22,11 @@ void metatradenode::MetaTradeClient::RunAsync() {
 
 void metatradenode::MetaTradeClient::RegisterSubscribe() {
 	_status = Status::SERVICE_INIT;
-	this->Subscribe(SUB_TRADE, std::bind(&BlockChainService::onTrade, _service, std::placeholders::_1));
-	this->Subscribe(SUB_SPAWN, std::bind(&BlockChainService::onSpawn, _service, std::placeholders::_1));
-	this->Subscribe(SUB_JUDGE, std::bind(&BlockChainService::onJudge, _service, std::placeholders::_1));
-	this->Subscribe(SUB_SEMI_SYNC, std::bind(&BlockChainService::onSemiSync, _service, std::placeholders::_1));
-	this->Subscribe(SUB_SYNC, std::bind(&BlockChainService::onSync, _service, std::placeholders::_1));
+	this->Subscribe(SUB_TRADE, std::bind(&BlockchainService::onTrade, _bc_service, std::placeholders::_1));
+	this->Subscribe(SUB_SPAWN, std::bind(&BlockchainService::onSpawn, _bc_service, std::placeholders::_1));
+	this->Subscribe(SUB_JUDGE, std::bind(&BlockchainService::onJudge, _bc_service, std::placeholders::_1));
+	this->Subscribe(SUB_SEMI_SYNC, std::bind(&BlockchainService::onSemiSync, _bc_service, std::placeholders::_1));
+	this->Subscribe(SUB_SYNC, std::bind(&BlockchainService::onSync, _bc_service, std::placeholders::_1));
 	_status = Status::SUB_ALL;
 	_status = Status::FINISHED;
 }

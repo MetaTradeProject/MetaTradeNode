@@ -143,17 +143,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BlockChainImpl.cpp" />
+    <ClCompile Include="MetaTradeBlockchainImpl.cpp" />
     <ClCompile Include="CryptoUtils.cpp" />
     <ClCompile Include="example.cpp" />
+    <ClCompile Include="MetaTradeBlockchainModels.cpp" />
     <ClCompile Include="MetaTradeClient.cpp" />
+    <ClCompile Include="MetaTradeLocalImpl.cpp" />
     <ClCompile Include="StompConst.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlockChainImpl.h" />
-    <ClInclude Include="BlockChainService.h" />
+    <ClInclude Include="MetaTradeBlockchainImpl.h" />
+    <ClInclude Include="BlockchainService.h" />
     <ClInclude Include="CryptoUtils.h" />
+    <ClInclude Include="LocalService.h" />
+    <ClInclude Include="MetaTradeBlockchainModels.h" />
     <ClInclude Include="MetaTradeClient.h" />
+    <ClInclude Include="MetaTradeLocalImpl.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\cJSON.dll" />

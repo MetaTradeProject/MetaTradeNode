@@ -24,10 +24,16 @@
     <ClCompile Include="example.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="BlockChainImpl.cpp">
+    <ClCompile Include="MetaTradeBlockchainImpl.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CryptoUtils.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaTradeLocalImpl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MetaTradeBlockchainModels.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,13 +41,22 @@
     <ClInclude Include="MetaTradeClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BlockChainService.h">
+    <ClInclude Include="BlockchainService.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="BlockChainImpl.h">
+    <ClInclude Include="MetaTradeBlockchainImpl.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CryptoUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LocalService.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaTradeLocalImpl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaTradeBlockchainModels.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

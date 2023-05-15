@@ -15,7 +15,8 @@ namespace metatradenode {
 	extern const char* POST_AGREE;
 	extern const char* POST_SYNC;
 
-	class BlockChainService;
+	class BlockchainService;
+	class LocalService;
 
 	class MetaTradeClient : public webstomppp::WebStompClient
 	{
@@ -27,19 +28,19 @@ namespace metatradenode {
 			SUB_ALL,
 			FINISHED
 		};
-		MetaTradeClient(const char* wallet_address) : _wallet_address(wallet_address), _status(Status::BORN), _service(nullptr), _async_thread(nullptr) {};
+		MetaTradeClient(const char* wallet_address) : _status(Status::BORN), _bc_service(nullptr), _local_service(nullptr), _async_thread(nullptr) {};
 		~MetaTradeClient();
-		void RegisterService(metatradenode::BlockChainService* service) { this->_service = service; };
+		void RegisterService(metatradenode::BlockchainService* service1, metatradenode::LocalService* service2) { this->_bc_service = service1; this->_local_service = service2 };
 		void RunSync();
 		void RunAsync();
-		friend class BlockChainService;
+		friend class BlockchainService;
 	private:
 		std::thread* _async_thread;
 		void OnConnected() override;
 		void OnDisconnected() override;
 		void RegisterSubscribe();
-		std::string _wallet_address;
-		metatradenode::BlockChainService* _service;
+		metatradenode::BlockchainService* _bc_service;
+		metatradenode::LocalService* _local_service;
 		Status _status;
 	};
 };

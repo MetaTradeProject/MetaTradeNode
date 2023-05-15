@@ -20,14 +20,14 @@ int main() {
 	CryptoUtils::SignTrade(data_hash, str.c_str(), sign);
 	std::cout << "Message Hash: " << data_hash << std::endl;
 	std::cout << "Signature: " << sign << std::endl;
-	std::cout << "isValidTrade: " << CryptoUtils::isValidSignature("03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+	std::cout << "isValidTrade1: " << CryptoUtils::isValidSignature("03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
 		"b0745147017bd3458e6c08b8b2d194f4e16c96d59f42229394095e74e291b0165da374c7e8e11565bd428541a92c012c973917adf4d013fd15974d4bccd7a3e9", 
 		"0259dee66ab619c4a9e215d070052d1ae3a2075e5f58c67516b2e4884a88c79be9") << std::endl;
 	std::cout << "cJSON Ver: " << cJSON_Version() << std::endl;
-	//metatradenode::MetaTradeClient client("123");
-	//BlockChainImpl block_chain;
-	//client.RegisterService(&block_chain);
-	//block_chain.RegisterClient(&client);
-	//
-	//client.RunSync();
+	metatradenode::MetaTradeClient client("123");
+	MetaTradeBlockchainImpl block_chain;
+	client.RegisterService(&block_chain);
+	block_chain.RegisterClient(&client);
+	
+	client.RunSync();
 }
