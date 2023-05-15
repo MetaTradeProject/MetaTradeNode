@@ -3,6 +3,7 @@
 #include "BlockChainImpl.h"
 #include "CryptoUtils.h"
 #include <cJSON/cJSON.h>
+#include <webstomp++/WebStompType.h>
 #pragma comment(lib , "cJSON.lib")
 
 

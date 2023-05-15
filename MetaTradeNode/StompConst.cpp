@@ -1,5 +1,5 @@
 namespace metatradenode {
-	const char* STOMP_PATH = "ws://47.102.200.110/meta-trade/stomp";
+	const char* STOMP_PATH = "ws://127.0.0.1:7285/meta-trade/stomp";
 
 	const char* SUB_INIT = "/meta-trade/post/init";
 	const char* SUB_TRADE = "/meta-trade/subscribe/trade";

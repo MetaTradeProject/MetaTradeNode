@@ -40,7 +40,7 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
     return_val = secp256k1_context_randomize(ctx, randomize);
     assert(return_val);
 
-    if (!secp256k1_ec_seckey_verify(ctx, src)){
+    if (!secp256k1_ec_seckey_verify(ctx, src)) {
         return;;
     }
 
@@ -65,7 +65,7 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
     }
     public_key = new char[67];
     strcpy_s(public_key, 67, ss.str().c_str());
-    
+
 
     //Hash160
     picosha2::hash256_one_by_one hasher;
@@ -109,7 +109,7 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
     cat[23] = (hex2byte(check[4]) << 4) | hex2byte(check[5]);
     cat[24] = (hex2byte(check[6]) << 4) | hex2byte(check[7]);
 
-    
+
     auto str = EncodeBase58(std::begin(cat), std::end(cat));
     address = new char[str.size() + 1];
     strcpy_s(address, str.size() + 1, str.c_str());
@@ -121,7 +121,7 @@ void CryptoUtils::GeneratePublic(const char* private_key, char*& public_key, cha
         return;
     }
     else {
-        for (size_t i = 0; i < 32; i++){
+        for (size_t i = 0; i < 32; i++) {
             unsigned char fir = hex2byte(private_key[2 * i]);
             unsigned char sec = hex2byte(private_key[2 * i + 1]);
             seckey[i] = (fir << 4) | sec;
