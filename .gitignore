@@ -4,4 +4,5 @@ x64/
 build/
 
 *.vcxproj
+*.vcxproj.*
 *.sln
