@@ -1,5 +1,7 @@
 .vs/
 x64/
 .vscode/
-*.vcxproj
 build/
+
+*.vcxproj
+*.sln
