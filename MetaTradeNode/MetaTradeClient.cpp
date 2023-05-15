@@ -1,5 +1,6 @@
 #include "MetaTradeClient.h"
 #include "BlockChainService.h"
+#include "LocalService.h"
 
 void metatradenode::MetaTradeClient::OnConnected() {
 	std::string sub_str = std::string(SUB_INIT).append("/").append(std::to_string(_local_service->getStartIndex()));

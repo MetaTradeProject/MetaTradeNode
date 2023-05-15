@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\软工\mate\MetaTradeNode-main\MetaTradeNode-main\MetaTradeNode\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\软工\mate\MetaTradeNode-main\MetaTradeNode-main\MetaTradeNode\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\Visual Studio Projects\MetaTradeNode\MetaTradeNode\include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\Visual Studio Projects\MetaTradeNode\MetaTradeNode\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -122,7 +122,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\软工\mate\MetaTradeNode-main\MetaTradeNode-main\MetaTradeNode\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>F:\Visual Studio Projects\MetaTradeNode\MetaTradeNode\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -150,7 +150,6 @@
     <ClCompile Include="MetaTradeClient.cpp" />
     <ClCompile Include="MetaTradeLocalImpl.cpp" />
     <ClCompile Include="StompConst.cpp" />
-    <ClCompile Include="Trade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaTradeBlockchainImpl.h" />

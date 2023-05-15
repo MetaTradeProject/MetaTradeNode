@@ -1,6 +1,6 @@
-#include "BlockChainService.h"
+#include "BlockchainService.h"
 #include "MetaTradeClient.h"
-#include "BlockChainImpl.h"
+#include "MetaTradeBlockchainImpl.h"
 #include "CryptoUtils.h"
 #include <cJSON/cJSON.h>
 #include <webstomp++/WebStompType.h>
@@ -25,10 +25,10 @@ int main() {
 		"b0745147017bd3458e6c08b8b2d194f4e16c96d59f42229394095e74e291b0165da374c7e8e11565bd428541a92c012c973917adf4d013fd15974d4bccd7a3e9", 
 		"0259dee66ab619c4a9e215d070052d1ae3a2075e5f58c67516b2e4884a88c79be9") << std::endl;
 	std::cout << "cJSON Ver: " << cJSON_Version() << std::endl;
-	metatradenode::MetaTradeClient client("123");
+	/*metatradenode::MetaTradeClient client("123");
 	MetaTradeBlockchainImpl block_chain;
 	client.RegisterService(&block_chain);
 	block_chain.RegisterClient(&client);
 	
-	client.RunSync();
+	client.RunSync();*/
 }
