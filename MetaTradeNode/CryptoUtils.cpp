@@ -25,7 +25,7 @@ std::string CryptoUtils::GetSha256(const char* src) {
     return picosha2::hash256_hex_string(std::string(src));
 }
 
-void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& address) {
+std::string CryptoUtils::PrivateKey2Address(unsigned char* src) {
     unsigned char randomize[32];
     int return_val;
     secp256k1_pubkey pubkey;
@@ -35,13 +35,13 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
 
     if (!fill_random(randomize, sizeof(randomize))) {
         printf("Failed to generate randomness\n");
-        return;
+        return "";
     }
     return_val = secp256k1_context_randomize(ctx, randomize);
     assert(return_val);
 
     if (!secp256k1_ec_seckey_verify(ctx, src)){
-        return;;
+        return "";
     }
 
     /* Public key creation using a valid context with a verified secret key should never fail */
@@ -54,18 +54,6 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
     assert(return_val);
     /* Should be the same size as the size of the output, because we passed a 33 byte array. */
     assert(len == sizeof(compressed_pubkey));
-
-    secp256k1_context_destroy(ctx);
-
-    std::stringstream ss;
-    for (size_t i = 0; i < 33; i++) {
-        char c[5];
-        sprintf_s(c, "%02x", compressed_pubkey[i]);
-        ss << c;
-    }
-    public_key = new char[67];
-    strcpy_s(public_key, 67, ss.str().c_str());
-    
 
     //Hash160
     picosha2::hash256_one_by_one hasher;
@@ -109,24 +97,21 @@ void CryptoUtils::SecpECDSA(unsigned char* src, char*& public_key, char*& addres
     cat[23] = (hex2byte(check[4]) << 4) | hex2byte(check[5]);
     cat[24] = (hex2byte(check[6]) << 4) | hex2byte(check[7]);
 
-    
-    auto str = EncodeBase58(std::begin(cat), std::end(cat));
-    address = new char[str.size() + 1];
-    strcpy_s(address, str.size() + 1, str.c_str());
+    return EncodeBase58(std::begin(cat), std::end(cat));
 }
 
-void CryptoUtils::GeneratePublic(const char* private_key, char*& public_key, char*& address) {
+std::string CryptoUtils::PrivateKey2Address(const char* src) {
     unsigned char seckey[32]{};
-    if (strlen(private_key) != 64) {
-        return;
+    if (strlen(src) != 64) {
+        return "";
     }
     else {
         for (size_t i = 0; i < 32; i++){
-            unsigned char fir = hex2byte(private_key[2 * i]);
-            unsigned char sec = hex2byte(private_key[2 * i + 1]);
+            unsigned char fir = hex2byte(src[2 * i]);
+            unsigned char sec = hex2byte(src[2 * i + 1]);
             seckey[i] = (fir << 4) | sec;
         }
-        return CryptoUtils::SecpECDSA(seckey, public_key, address);
+        return CryptoUtils::PrivateKey2Address(seckey);
     }
 }
 
@@ -165,129 +150,6 @@ bool CryptoUtils::isValidAddress(const char* address)
         }
     }
     return false;
-}
-
-bool CryptoUtils::isValidSignature(const char* trade_hash, const char* signature, const char* sender_public_key)
-{
-    secp256k1_ecdsa_signature sig;
-    secp256k1_pubkey pubkey;
-
-    unsigned char hash[32]{};
-    if (strlen(trade_hash) != 64) {
-        return false;
-    }
-    else {
-        for (size_t i = 0; i < 32; i++) {
-            unsigned char fir = hex2byte(trade_hash[2 * i]);
-            unsigned char sec = hex2byte(trade_hash[2 * i + 1]);
-            hash[i] = (fir << 4) | sec;
-        }
-    }
-
-    unsigned char compressed_pubkey[33];
-    if (strlen(sender_public_key) != 66) {
-        return false;
-    }
-    else {
-        for (size_t i = 0; i < 33; i++) {
-            unsigned char fir = hex2byte(sender_public_key[2 * i]);
-            unsigned char sec = hex2byte(sender_public_key[2 * i + 1]);
-            compressed_pubkey[i] = (fir << 4) | sec;
-        }
-    }
-
-    unsigned char serialized_signature[64];
-    if (strlen(signature) != 128) {
-        return false;
-    }
-    else {
-        for (size_t i = 0; i < 64; i++) {
-            unsigned char fir = hex2byte(signature[2 * i]);
-            unsigned char sec = hex2byte(signature[2 * i + 1]);
-            serialized_signature[i] = (fir << 4) | sec;
-        }
-    }
-
-    /* Deserialize the signature. This will return 0 if the signature can't be parsed correctly. */
-    if (!secp256k1_ecdsa_signature_parse_compact(secp256k1_context_static, &sig, serialized_signature)) {
-        printf("Failed parsing the signature\n");
-        return false;
-    }
-
-    /* Deserialize the public key. This will return 0 if the public key can't be parsed correctly. */
-    if (!secp256k1_ec_pubkey_parse(secp256k1_context_static, &pubkey, compressed_pubkey, sizeof(compressed_pubkey))) {
-        printf("Failed parsing the public key\n");
-        return false;
-    }
-
-    /* Verify a signature. This will return 1 if it's valid and 0 if it's not. */
-    return secp256k1_ecdsa_verify(secp256k1_context_static, &sig, hash, &pubkey);
-}
-
-void CryptoUtils::SignTrade(const char* trade_hash, const char* private_key, char*& signature)
-{
-    unsigned char randomize[32];
-    secp256k1_ecdsa_signature sig;
-    int return_val;
-
-    secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_NONE);
-
-    if (!fill_random(randomize, sizeof(randomize))) {
-        printf("Failed to generate randomness\n");
-        return;
-    }
-    return_val = secp256k1_context_randomize(ctx, randomize);
-    assert(return_val);
-
-    unsigned char hash[32]{};
-    if (strlen(trade_hash) != 64) {
-        return;
-    }
-    else {
-        for (size_t i = 0; i < 32; i++) {
-            unsigned char fir = hex2byte(trade_hash[2 * i]);
-            unsigned char sec = hex2byte(trade_hash[2 * i + 1]);
-            hash[i] = (fir << 4) | sec;
-        }
-    }
-
-    unsigned char seckey[32]{};
-    if (strlen(private_key) != 64) {
-        return;
-    }
-    else {
-        for (size_t i = 0; i < 32; i++) {
-            unsigned char fir = hex2byte(private_key[2 * i]);
-            unsigned char sec = hex2byte(private_key[2 * i + 1]);
-            seckey[i] = (fir << 4) | sec;
-        }
-    }
-
-
-    /* Generate an ECDSA signature `noncefp` and `ndata` allows you to pass a
-     * custom nonce function, passing `NULL` will use the RFC-6979 safe default.
-     * Signing with a valid context, verified secret key
-     * and the default nonce function should never fail. */
-    return_val = secp256k1_ecdsa_sign(ctx, &sig, hash, seckey, NULL, NULL);
-    assert(return_val);
-
-    /* Serialize the signature in a compact form. Should always return 1
-     * according to the documentation in secp256k1.h. */
-    unsigned char serialized_signature[64];
-    return_val = secp256k1_ecdsa_signature_serialize_compact(ctx, serialized_signature, &sig);
-    assert(return_val);
-
-    std::stringstream ss;
-    for (size_t i = 0; i < 64; i++) {
-        char c[5];
-        sprintf_s(c, "%02x", serialized_signature[i]);
-        ss << c;
-    }
-
-    signature = new char[129];
-    strcpy_s(signature, 129, ss.str().c_str());
-
-    secp256k1_context_destroy(ctx);
 }
 
 std::string CryptoUtils::EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)

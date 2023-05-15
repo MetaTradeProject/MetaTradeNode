@@ -30,6 +30,18 @@
     <ClCompile Include="CryptoUtils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="BlockChainService.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Block.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Trade.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RawBlock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MetaTradeClient.h">
@@ -42,6 +54,15 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CryptoUtils.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Block.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Trade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RawBlock.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
