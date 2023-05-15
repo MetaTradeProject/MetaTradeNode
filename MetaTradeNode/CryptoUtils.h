@@ -33,15 +33,17 @@ class CryptoUtils {
 	/*
 		Private key: random --> sha256(random)
 	*/
-public:  
+public:
 	static std::string GetSha256(const char* src);
-	static std::string PrivateKey2Address(unsigned char* src);
-	static std::string PrivateKey2Address(const char* src);
+	static void GeneratePublic(const char* private_key, char*& public_key, char*& address);
 	static bool isValidAddress(const char* address);
+	static bool isValidSignature(const char* trade_hash, const char* signature, const char* sender_public_key);
+	static void SignTrade(const char* trade_hash, const char* private_key, char*& signature);
 private:
 	static bool IsSpace(char c) { return c == ' '; };
 	static std::string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend);
 	static bool DecodeBase58(const char* psz, std::vector<unsigned char>& vch, int max_ret_len);
 	static int fill_random(unsigned char* data, size_t size);
+	static void SecpECDSA(unsigned char* src, char*& public_key, char*& address);
 	static unsigned char hex2byte(char c);
 };
