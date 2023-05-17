@@ -4,16 +4,24 @@
 #include <vector>
 #include <deque>
 #include <cJSON/cJSON.h>
+#include <shared_mutex>
+#include <unique>
+
+class LevelDBLocalImpl;
+extern constexpr const char* PropertyKey();
 
 class MetaTradeBlockchainImpl : public metatradenode::BlockchainService
 {
 public:
 	MetaTradeBlockchainImpl():metatradenode::BlockchainService() {};
+	void SendTrade(metatradenode::Trade& trade) override;
+	friend class LevelDBLocalImpl;
 private:
 	std::vector<metatradenode::Block> _chain;
 	std::deque<metatradenode::RawBlock> _rawblock_deque;
 	std::vector<metatradenode::Trade> _trade_list;
 	std::string _wallet_address;
+	std::shared_mutex _lock;
 
 	void ParseSyncMessage(const char* raw);
 	void ParseSemiSyncMessage(const char* raw, metatradenode::Block& block);

@@ -6,7 +6,7 @@
 
 std::string metatradenode::Trade::getHash() {
     std::stringstream ss;
-    ss << senderAddress << receiverAddress << std::fixed <<  std::setprecision(2)<< amount << commission << std::setprecision(6) << timestamp;
+    ss << senderAddress << receiverAddress << amount << commission << timestamp;
     return CryptoUtils::GetSha256(ss.str().c_str());
 }
 
@@ -40,8 +40,8 @@ void metatradenode::Block::calMerkleHash() {
     this->merkle_hash = hashTree.front();
 }
 
-double metatradenode::Block::getBlockCommision(){
-    double sum = 0;
+long metatradenode::Block::getBlockCommision(){
+    long sum = 0;
     for (auto& trade : block_body) {
         sum += trade.commission;
     }

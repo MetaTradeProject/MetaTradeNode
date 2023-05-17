@@ -1,6 +1,7 @@
 #pragma once
 #include <webstomp++/WebStompType.h>
 #include "MetaTradeClient.h"
+#include "MetaTradeBlockchainModels.h"
 #pragma comment(lib , "cJSON.lib")
 
 namespace metatradenode {
@@ -9,6 +10,8 @@ namespace metatradenode {
 	public:
 		void RegisterClient(metatradenode::MetaTradeClient* client) { this->_client = client; };
 		void RegisterLocal(metatradenode::LocalService* local) { this->_local = local; };
+		void SendTrade(metatradenode::Trade& trade) = 0;
+		virtual ~BlockchainService() = 0;
 		friend class metatradenode::MetaTradeClient;
 	protected:
 		virtual void Init(webstomppp::StompCallbackMsg msg) { _client->RegisterSubscribe(); };
@@ -20,6 +23,6 @@ namespace metatradenode {
 		virtual void Stop() = 0;
 		metatradenode::MetaTradeClient* _client;
 		metatradenode::LocalService* _local;
-		BlockchainService() :_client(nullptr) {};
+		BlockchainService() :_client(nullptr), _local(nullptr) {};
 	};
 }

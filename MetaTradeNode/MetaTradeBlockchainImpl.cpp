@@ -5,7 +5,8 @@
 
 void MetaTradeBlockchainImpl::Init(webstomppp::StompCallbackMsg msg) {
 	ParseSyncMessage(msg.body);
-	_local->onLocalSync(msg.body);
+	_local->onLocalSync(this->_chain);
+	this->_chain.clear();
 	BlockchainService::Init(msg);
 }
 
@@ -18,6 +19,7 @@ void MetaTradeBlockchainImpl::onTrade(webstomppp::StompCallbackMsg msg) {
 }
 
 void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
+	std::unique_lock<std::shared_mutex> ul(_lock);
 	cJSON* root = cJSON_Parse(msg.body);
 	int proofLevel = cJSON_GetObjectItem(root, "proofLevel")->valueint;
 
@@ -30,6 +32,7 @@ void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
 }
 
 void MetaTradeBlockchainImpl::onJudge(webstomppp::StompCallbackMsg msg){
+	std::shared_lock<std::shared_mutex> sl(_lock);
 	cJSON* root = cJSON_Parse(msg.body);
 	int proof = cJSON_GetObjectItem(root, "proofLevel")->valueint;
 
@@ -44,15 +47,18 @@ void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg)
 	ParseSemiSyncMessage(msg.body, block);
 
 	this->_chain.emplace_back(block);
-	_local->onSemiSync(msg.body);
+	_local->onSemiSync(block);
+	this->_chain.pop_back();
 }
 
 void MetaTradeBlockchainImpl::onSync(webstomppp::StompCallbackMsg msg) {
 	ParseSyncMessage(msg.body);
-	_local->onLocalSync(msg.body);
+	_local->onLocalSync(this->_chain);
+	this->_chain.clear();
 }
 
 void MetaTradeBlockchainImpl::ParseSyncMessage(const char* raw) {
+	std::unique_lock<std::shared_mutex> ul(_lock);
 	cJSON* root = cJSON_Parse(raw);
 	cJSON* chain_root = cJSON_GetObjectItem(root, "chain");
 	cJSON* raw_blocks_root = cJSON_GetObjectItem(root, "rawBlocks");
@@ -83,6 +89,7 @@ void MetaTradeBlockchainImpl::ParseChain(cJSON* root, std::vector<metatradenode:
 }
 
 void MetaTradeBlockchainImpl::ParseSemiSyncMessage(const char* raw, metatradenode::Block& block) {
+	std::unique_lock<std::shared_mutex> ul(_lock);
 	cJSON* root = cJSON_Parse(raw);
 	cJSON* block_root = cJSON_GetObjectItem(root, "block");
 	cJSON* raw_blocks_root = cJSON_GetObjectItem(root, "rawBlocks");
@@ -150,6 +157,7 @@ bool MetaTradeBlockchainImpl::isValidTrade(metatradenode::Trade& trade) {
 }
 
 void MetaTradeBlockchainImpl::MiningBlock(){
+	std::shared_lock<std::shared_mutex> sl(_lock);
 	auto& raw_block = this->_rawblock_deque.front();
 
 	metatradenode::Block block;
@@ -181,7 +189,6 @@ void MetaTradeBlockchainImpl::MiningBlock(){
 	SendProofMessage(block);
 }
 
-
 bool MetaTradeBlockchainImpl::isValidProof(int proof, metatradenode::RawBlock& raw_block) {
 	metatradenode::Block block;
 	for (auto& trade : raw_block.block_body) {
@@ -204,21 +211,72 @@ bool MetaTradeBlockchainImpl::isValidProof(int proof, metatradenode::RawBlock& r
 		return false;
 	}
 }
+
 void MetaTradeBlockchainImpl::SendAgreeMessage(int proof) {
 	cJSON* agr_msg = cJSON_CreateObject();
 	cJSON_AddItemToObject(agr_msg, "address", cJSON_CreateString(this->_wallet_address.c_str()));
 	cJSON_AddItemToObject(agr_msg, "proof", cJSON_CreateNumber(proof));
-	_client->Send(cJSON_PrintUnformatted(agr_msg));
+	
+	webstomppp::StompJsonSendFrame frame(metatradenode::POST_AGREE, cJSON_PrintUnformatted(agr_msg));
+	_client->Send(frame.toRawString().c_str());
 	cJSON_Delete(agr_msg);
 }
 
 void MetaTradeBlockchainImpl::SendSyncRequest(){
 	cJSON* loc_msg = cJSON_CreateObject();
 	cJSON_AddItemToObject(loc_msg, "startIndex", cJSON_CreateNumber(_local->getStartIndex()));
-	_client->Send(cJSON_PrintUnformatted(loc_msg));
+
+	webstomppp::StompJsonSendFrame frame(metatradenode::POST_SYNC, cJSON_PrintUnformatted(loc_msg));
+	_client->Send(frame.toRawString().c_str());
 	cJSON_Delete(loc_msg);
 }
 
-void MetaTradeBlockchainImpl::SendProofMessage(metatradenode::Block& block) {
+void MetaTradeBlockchainImpl::SendTrade(metatradenode::Trade& trade) {
+	cJSON* trade_msg = cJSON_CreateObject();
 
+	cJSON_AddItemToObject(trade_msg, "senderAddress", cJSON_CreateString(trade.senderAddress.c_str()));
+	cJSON_AddItemToObject(trade_msg, "receiverAddress", cJSON_CreateString(trade.receiverAddress.c_str()));
+	cJSON_AddItemToObject(trade_msg, "amount", cJSON_CreateNumber(trade.amount));
+	cJSON_AddItemToObject(trade_msg, "commission", cJSON_CreateNumber(trade.commission));
+	cJSON_AddItemToObject(trade_msg, "timestamp", cJSON_CreateNumber(trade.timestamp));
+	cJSON_AddItemToObject(trade_msg, "signature", cJSON_CreateString(trade.signature.c_str()));
+	cJSON_AddItemToObject(trade_msg, "senderPublicKey", cJSON_CreateString(trade.senderPublicKey.c_str()));
+	cJSON_AddItemToObject(trade_msg, "description", cJSON_CreateString(trade.description.c_str()));
+
+
+	webstomppp::StompJsonSendFrame frame(metatradenode::POST_TRADE, cJSON_PrintUnformatted(trade_msg));
+	_client->Send(frame.toRawString().c_str());
+	cJSON_Delete(trade_msg);
+}
+
+void MetaTradeBlockchainImpl::SendProofMessage(metatradenode::Block& block) {
+	cJSON* proof_msg = cJSON_CreateObject();
+	cJSON* block_msg = cJSON_CreateObject();
+	cJSON* body = cJSON_CreateArray();
+
+	for (auto& trade : block.block_body) {
+		cJSON* trade_msg = cJSON_CreateObject();
+
+		cJSON_AddItemToObject(trade_msg, "senderAddress", cJSON_CreateString(trade.senderAddress.c_str()));
+		cJSON_AddItemToObject(trade_msg, "receiverAddress", cJSON_CreateString(trade.receiverAddress.c_str()));
+		cJSON_AddItemToObject(trade_msg, "amount", cJSON_CreateNumber(trade.amount));
+		cJSON_AddItemToObject(trade_msg, "commission", cJSON_CreateNumber(trade.commission));
+		cJSON_AddItemToObject(trade_msg, "timestamp", cJSON_CreateNumber(trade.timestamp));
+		cJSON_AddItemToObject(trade_msg, "signature", cJSON_CreateString(trade.signature.c_str()));
+		cJSON_AddItemToObject(trade_msg, "senderPublicKey", cJSON_CreateString(trade.senderPublicKey.c_str()));
+		cJSON_AddItemToObject(trade_msg, "description", cJSON_CreateString(trade.description.c_str()));
+		cJSON_AddItemToArray(body, trade_msg);
+	}
+	cJSON_AddItemToObject(block_msg, "prevHash", cJSON_CreateString(block.prev_hash.c_str()));
+	cJSON_AddItemToObject(block_msg, "merkleHash", cJSON_CreateString(block.merkle_hash.c_str()));
+	cJSON_AddItemToObject(block_msg, "proofLevel", cJSON_CreateNumber(block.proof_level));
+	cJSON_AddItemToObject(block_msg, "proof", cJSON_CreateNumber(block.proof));
+	cJSON_AddItemToObject(block_msg, "blockBody", body);
+
+	cJSON_AddItemToObject(proof_msg, "address", cJSON_CreateString(_wallet_address.c_str()));
+	cJSON_AddItemToObject(proof_msg, "block", block_msg);
+
+	webstomppp::StompJsonSendFrame frame(metatradenode::POST_PROOF, cJSON_PrintUnformatted(proof_msg));
+	_client->Send(frame.toRawString().c_str());
+	cJSON_Delete(proof_msg);
 }

@@ -5,8 +5,8 @@ namespace metatradenode {
 	struct Trade {
 		std::string senderAddress;
 		std::string receiverAddress;
-		double amount;
-		double commission;
+		long amount;
+		long commission;
 		long timestamp;
 		std::string signature;
 		std::string senderPublicKey;
