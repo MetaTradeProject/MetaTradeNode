@@ -1,4 +1,5 @@
 #include "MetaTradeNode.h"
+#include <chrono>
 
 void metatradenode::MetaTradeNode::init(){
     _client = new metatradenode::MetaTradeClient();
@@ -35,6 +36,7 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
     trade.receiverAddress = receiver;
     trade.commission = 500;
     trade.senderPublicKey = _config.pubkey;
+    trade.timestamp = std::chrono::duration_cast<milliseconds>(std::chrono::system_clock::now().time_since_epoch());
 
     if (item == "0") {
         //cash

@@ -5,7 +5,8 @@
 #include <deque>
 #include <cJSON/cJSON.h>
 #include <shared_mutex>
-#include <unique>
+#include <atomic>
+#include <condition_variable>
 
 class LevelDBLocalImpl;
 extern constexpr const char* PropertyKey();
@@ -22,6 +23,8 @@ private:
 	std::vector<metatradenode::Trade> _trade_list;
 	std::string _wallet_address;
 	std::shared_mutex _lock;
+	std::condition_variable _cond;
+	std::atomic<bool> _proof_done{false};
 
 	void ParseSyncMessage(const char* raw);
 	void ParseSemiSyncMessage(const char* raw, metatradenode::Block& block);

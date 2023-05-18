@@ -12,6 +12,7 @@ namespace metatradenode {
 		char prikey[65];
 		char pubkey[67];
 		char address[35];
+		bool mining;
 	};
 
 	class MetaTradeNode {
@@ -28,6 +29,7 @@ namespace metatradenode {
 		MetaTradeNode(const MetaTradeNode&) = delete;
 
 		void init();
+		void reload();
 		void run(bool sync = true);
 		long queryAmount(const char* address, const char* item_id);
 		void submitTrade(const char* receiver, const char* item_id, long amount);
