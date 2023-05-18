@@ -4,7 +4,7 @@
 
 void metatradenode::MetaTradeNode::init(){
     _client = new metatradenode::MetaTradeClient();
-    _bc_service = new MetaTradeBlockchainImpl();
+    _bc_service = new MetaTradeBlockchainImpl(_config.address);
     _lc_service = new LevelDBLocalImpl();
 
     _client->RegisterService(_bc_service, _lc_service);

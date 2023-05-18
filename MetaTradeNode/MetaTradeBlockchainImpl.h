@@ -15,22 +15,22 @@ extern constexpr const char* PropertyKey();
 class MetaTradeBlockchainImpl : public metatradenode::BlockchainService
 {
 public:
-	MetaTradeBlockchainImpl():metatradenode::BlockchainService() {};
+	MetaTradeBlockchainImpl(std::string address):metatradenode::BlockchainService(), _wallet_address(address) {};
 	~MetaTradeBlockchainImpl();
 	void SendTrade(metatradenode::Trade& trade) override;
 	void Mining() override;
 	void SendSyncRequest() override;
 	friend class LevelDBLocalImpl;
 private:
-	std::vector<metatradenode::Block> _chain;
-	std::deque<metatradenode::RawBlock> _rawblock_deque;
-	std::vector<metatradenode::Trade> _trade_list;
+	std::vector<metatradenode::Block> _chain {};
+	std::deque<metatradenode::RawBlock> _rawblock_deque {};
+	std::vector<metatradenode::Trade> _trade_list {};
 	std::string _wallet_address;
-	std::shared_mutex _lock;
-	std::condition_variable _cond;
-	std::thread* _mining_thread{ nullptr };
-	std::atomic<bool> _proof_done{false};
-	std::atomic<bool> _quit_flag{false};
+	std::shared_mutex _lock {};
+	std::condition_variable _cond {};
+	std::thread* _mining_thread { nullptr };
+	std::atomic<bool> _proof_done { false };
+	std::atomic<bool> _quit_flag { false };
 
 	void ParseSyncMessage(const char* raw);
 	void ParseSemiSyncMessage(const char* raw, metatradenode::Block& block);
