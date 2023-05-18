@@ -16,6 +16,7 @@ class MetaTradeBlockchainImpl : public metatradenode::BlockchainService
 public:
 	MetaTradeBlockchainImpl():metatradenode::BlockchainService() {};
 	void SendTrade(metatradenode::Trade& trade) override;
+	void MiningBlock();
 	friend class LevelDBLocalImpl;
 private:
 	std::vector<metatradenode::Block> _chain;
@@ -34,8 +35,6 @@ private:
 	void SendAgreeMessage(int proof);
 	void SendSyncRequest();
 	bool isValidTrade(metatradenode::Trade& trade);
-
-	void MiningBlock();
 
 	static void ParseChain(cJSON* root, std::vector<metatradenode::Block>& chain);
 	static void ParseRawBlocks(cJSON* root, std::deque<metatradenode::RawBlock>& raw_blocks);

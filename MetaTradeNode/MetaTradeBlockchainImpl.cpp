@@ -81,7 +81,7 @@ void MetaTradeBlockchainImpl::onJudge(webstomppp::StompCallbackMsg msg){
 }
 
 void MetaTradeBlockchainImpl::Stop() {
-
+	//stop mining
 }
 
 bool MetaTradeBlockchainImpl::isValidTrade(metatradenode::Trade& trade) {
