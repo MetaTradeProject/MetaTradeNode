@@ -4,6 +4,7 @@
 #include <atomic>
 #include "LocalService.h"
 #include "MetaTradeBlockchainImpl.h"
+#pragma comment(lib , "leveldb.lib")
 
 
 class LevelDBLocalImpl : public metatradenode::LocalService {
