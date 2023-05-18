@@ -7,6 +7,7 @@
 #include <shared_mutex>
 #include <atomic>
 #include <condition_variable>
+#include <thread>
 
 class LevelDBLocalImpl;
 extern constexpr const char* PropertyKey();
@@ -15,8 +16,10 @@ class MetaTradeBlockchainImpl : public metatradenode::BlockchainService
 {
 public:
 	MetaTradeBlockchainImpl():metatradenode::BlockchainService() {};
+	~MetaTradeBlockchainImpl();
 	void SendTrade(metatradenode::Trade& trade) override;
-	void MiningBlock();
+	void Mining() override;
+	void SendSyncRequest() override;
 	friend class LevelDBLocalImpl;
 private:
 	std::vector<metatradenode::Block> _chain;
@@ -25,7 +28,9 @@ private:
 	std::string _wallet_address;
 	std::shared_mutex _lock;
 	std::condition_variable _cond;
+	std::thread* _mining_thread{ nullptr };
 	std::atomic<bool> _proof_done{false};
+	std::atomic<bool> _quit_flag{false};
 
 	void ParseSyncMessage(const char* raw);
 	void ParseSemiSyncMessage(const char* raw, metatradenode::Block& block);
@@ -33,7 +38,6 @@ private:
 	bool isValidProof(int proof, metatradenode::RawBlock& raw_block);
 	void SendProofMessage(metatradenode::Block& block);
 	void SendAgreeMessage(int proof);
-	void SendSyncRequest();
 	bool isValidTrade(metatradenode::Trade& trade);
 
 	static void ParseChain(cJSON* root, std::vector<metatradenode::Block>& chain);
@@ -50,5 +54,7 @@ private:
 	virtual void onSemiSync(webstomppp::StompCallbackMsg msg) override;
 	virtual void onSync(webstomppp::StompCallbackMsg msg) override;
 	virtual void Stop() override;
+
+	void MiningBlock();
 };
 

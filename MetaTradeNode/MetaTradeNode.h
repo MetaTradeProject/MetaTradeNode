@@ -21,7 +21,6 @@ namespace metatradenode {
 		metatradenode::MetaTradeClient* _client{ nullptr };
 		metatradenode::BlockchainService* _bc_service{ nullptr };
 		metatradenode::LocalService* _lc_service{ nullptr };
-		std::thread* _mining_thread{ nullptr };
 	public:
 		MetaTradeNode(metatradenode::nodeconfig& config) : _config(config) {};
 

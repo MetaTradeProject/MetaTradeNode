@@ -16,6 +16,13 @@ void MetaTradeBlockchainImpl::Init(webstomppp::StompCallbackMsg msg) {
 	BlockchainService::Init(msg);
 }
 
+MetaTradeBlockchainImpl::~MetaTradeBlockchainImpl(){
+	if (_mining_thread != nullptr) {
+		_mining_thread->join();
+		delete _mining_thread;
+	}
+}
+
 void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
 	cJSON* root = cJSON_Parse(msg.body);
 	int proofLevel = cJSON_GetObjectItem(root, "proofLevel")->valueint;
@@ -82,6 +89,7 @@ void MetaTradeBlockchainImpl::onJudge(webstomppp::StompCallbackMsg msg){
 
 void MetaTradeBlockchainImpl::Stop() {
 	//stop mining
+	this->_quit_flag.store(true);
 }
 
 bool MetaTradeBlockchainImpl::isValidTrade(metatradenode::Trade& trade) {
@@ -114,12 +122,26 @@ bool MetaTradeBlockchainImpl::isValidProof(int proof, metatradenode::RawBlock& r
 	}
 }
 
+void MetaTradeBlockchainImpl::Mining(){
+	this->_mining_thread = new std::thread(&MetaTradeBlockchainImpl::MiningBlock, this);
+}
+
 void MetaTradeBlockchainImpl::MiningBlock(){
 	do{
 		std::unique_lock<std::shared_mutex> ul(_lock);
 		_cond.wait(ul, [this](){
-			return !(this->_rawblock_deque.empty() || this->_proof_done.load());
+			if (this->_quit_flag.load()){
+				return true;
+			}
+			else{
+				return !(this->_rawblock_deque.empty() || this->_proof_done.load());
+			}
 		});
+		//quit
+		if(this->_quit_flag.load()){
+			break;
+		}
+
 		auto& raw_block = this->_rawblock_deque.front();
 		ul.unlock();
 

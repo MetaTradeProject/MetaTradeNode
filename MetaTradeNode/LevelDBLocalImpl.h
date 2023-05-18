@@ -11,12 +11,12 @@ private:
 	leveldb::DB* _db{ nullptr };
 	static std::string Key(std::string address, std::string item_id) { return address.append("-").append(item_id); };
 	std::atomic<int> _cur_index { 0 };
+	void updateIndexLocal();
 public:
 	LevelDBLocalImpl();
 	~LevelDBLocalImpl() {
 		if (_db != nullptr) {
-			auto s = _db->Put(leveldb::WriteOptions(), PropertyKey(), std::to_string(_cur_index));
-			assert(s.ok());
+			updateIndexLocal();
 			delete _db;
 		}
 	};

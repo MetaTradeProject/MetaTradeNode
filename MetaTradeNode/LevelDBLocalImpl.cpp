@@ -86,6 +86,7 @@ void LevelDBLocalImpl::onLocalSync(std::vector<metatradenode::Block>& chain){
 		}
 		_cur_index.fetch_add(1);
 	}
+	updateIndexLocal();
 }
 
 void LevelDBLocalImpl::onSemiSync(const metatradenode::Block& block) {
@@ -150,6 +151,7 @@ void LevelDBLocalImpl::onSemiSync(const metatradenode::Block& block) {
 		}
 	}
 	_cur_index.fetch_add(1);
+	updateIndexLocal();
 }
 
 bool LevelDBLocalImpl::isBalanceTrade(metatradenode::Trade) {
@@ -166,4 +168,13 @@ long LevelDBLocalImpl::queryAmount(std::string address, std::string item_id) {
 	else {
 		return atol(value.c_str());
 	}
+}
+
+void LevelDBLocalImpl::updateIndexLocal(){
+	//update index
+	leveldb::WriteBatch batch;
+	batch.Delete(PropertyKey());
+	batch.Put(PropertyKey(), std::to_string(_cur_index));
+	s = _db->Write(leveldb::WriteOptions(), &batch);
+	assert(s.ok());
 }

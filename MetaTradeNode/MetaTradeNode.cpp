@@ -1,6 +1,6 @@
 #include "MetaTradeNode.h"
 #include <chrono>
-#include <thread>
+
 
 void metatradenode::MetaTradeNode::init(){
     _client = new metatradenode::MetaTradeClient();
@@ -13,9 +13,10 @@ void metatradenode::MetaTradeNode::init(){
 }
 
 void metatradenode::MetaTradeNode::run(bool sync){
-    //mining thread
-    this->_mining_thread = new std::thread(&MetaTradeBlockchainImpl::MiningBlock, this->_bc_service);
-    this->_mining_thread
+    if(_config.mining){
+        //mining thread
+        this->_bc_service->Mining();
+    }
 
     if (sync) {
         _client->RunSync();
@@ -23,6 +24,10 @@ void metatradenode::MetaTradeNode::run(bool sync){
     else {
         _client->RunAsync();
     }
+}
+
+void metatradenode::MetaTradeNode::reload(){
+    this->_bc_service->SendSyncRequest();
 }
 
 long metatradenode::MetaTradeNode::queryAmount(const char* address, const char* item_id) {
@@ -69,15 +74,13 @@ metatradenode::MetaTradeNode::~MetaTradeNode(){
         //send disconnect
         _client->Disconnect();
 
-        //wait mining thread
-        _mining_thread->join();
-        delete _mining_thread;
-
         //wait client stop and delete
         delete _client;
 
+        //wait mining thread and delete
+        delete _bc_service;
+
         //delete service
         delete _lc_service;
-        delete _bc_service;
     }
 }
