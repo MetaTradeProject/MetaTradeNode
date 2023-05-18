@@ -1,7 +1,6 @@
 #include "MetaTradeNode.h"
 #include <chrono>
 
-
 void metatradenode::MetaTradeNode::init(){
     _client = new metatradenode::MetaTradeClient();
     _bc_service = new MetaTradeBlockchainImpl(_config.address);
@@ -52,7 +51,7 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
     if (item == "0") {
         //cash
         trade.amount = amount;
-        trade.commission = amount / commission_rate;
+        trade.commission = amount / metatradenode::commission_rate;
         trade.description = "";
     }
     else {
@@ -61,7 +60,7 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
         cJSON_AddItemToObject(ptr, "id", cJSON_CreateString(item_id));
         cJSON_AddItemToObject(ptr, "amount", cJSON_CreateNumber(amount));
         trade.amount = 0;
-        trade.commission = commission_item_fix;
+        trade.commission = metatradenode::commission_item_fix;
         trade.description = cJSON_PrintUnformatted(ptr);
         cJSON_Delete(ptr);
     }

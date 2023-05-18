@@ -8,15 +8,15 @@
 #include "CryptoUtils.h"
 
 namespace metatradenode {
+	const long long commission_rate = 100;
+	const long long commission_item_fix = 500;
+
 	struct nodeconfig {
 		char prikey[65];
 		char pubkey[67];
 		char address[35];
 		bool mining;
 	};
-
-	extern const long long commission_rate;
-	extern const long long commission_item_fix;
 
 	class MetaTradeNode {
 	private:
@@ -38,5 +38,6 @@ namespace metatradenode {
 		long long queryAmount(const char* address, const char* item_id);
 		void submitTrade(const char* receiver, const char* item_id, long long amount);
 	};
+
 }
 
