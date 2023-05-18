@@ -1,3 +1,4 @@
+#pragma once
 #include <crypto/picosha2.h>
 #include <crypto/rmd160.h>
 #include <stddef.h>

@@ -46,7 +46,7 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
     trade.receiverAddress = receiver;
     trade.commission = 500;
     trade.senderPublicKey = _config.pubkey;
-    trade.timestamp = std::chrono::duration_cast<milliseconds>(std::chrono::system_clock::now().time_since_epoch());
+    trade.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     if (item == "0") {
         //cash

@@ -2,9 +2,10 @@
 #include "LocalService.h"
 #include "CryptoUtils.h"
 #include <cJSON/cJSON.h>
+#include <chrono>
 
 void MetaTradeBlockchainImpl::Init(webstomppp::StompCallbackMsg msg) {
-	std::unique_lock<std::shared_mutex> ul(_lock);
+	std::unique_lock<std::mutex> ul(_lock);
 	ParseSyncMessage(msg.body);
 	if(this->_rawblock_deque.size() != 0){
 		this->_proof_done.store(false);
@@ -34,7 +35,7 @@ void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
 	this->_trade_list.erase(this->_trade_list.begin(), this->_trade_list.end());
 	
 	{
-		std::unique_lock<std::shared_mutex> ul(_lock);
+		std::unique_lock<std::mutex> ul(_lock);
 		this->_rawblock_deque.push_back(raw_block);
 		if(this->_rawblock_deque.size() != 0){
 			this->_proof_done.store(false);
@@ -44,7 +45,7 @@ void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
 }
 
 void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg){
-	std::unique_lock<std::shared_mutex> ul(_lock);
+	std::unique_lock<std::mutex> ul(_lock);
 	metatradenode::Block block;
 	ParseSemiSyncMessage(msg.body, block);
 	if(this->_rawblock_deque.size() != 0){
@@ -58,7 +59,7 @@ void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg){
 }
 
 void MetaTradeBlockchainImpl::onSync(webstomppp::StompCallbackMsg msg) {
-	std::unique_lock<std::shared_mutex> ul(_lock);
+	std::unique_lock<std::mutex> ul(_lock);
 	ParseSyncMessage(msg.body);
 	if(this->_rawblock_deque.size() != 0){
 		this->_proof_done.store(false);
@@ -78,7 +79,7 @@ void MetaTradeBlockchainImpl::onTrade(webstomppp::StompCallbackMsg msg) {
 }
 
 void MetaTradeBlockchainImpl::onJudge(webstomppp::StompCallbackMsg msg){
-	std::shared_lock<std::shared_mutex> sl(_lock);
+	std::unique_lock<std::mutex> sl(_lock);
 	cJSON* root = cJSON_Parse(msg.body);
 	int proof = cJSON_GetObjectItem(root, "proofLevel")->valueint;
 
@@ -94,7 +95,7 @@ void MetaTradeBlockchainImpl::Stop() {
 
 bool MetaTradeBlockchainImpl::isValidTrade(metatradenode::Trade& trade) {
 	return CryptoUtils::isValidAddress(trade.senderAddress.c_str())
-		&& CryptoUtils::isValidAddress(trade.receiverAddress.c_str())
+		&& (trade.receiverAddress == metatradenode::BORADCAST_ADDRESS ? true: CryptoUtils::isValidAddress(trade.receiverAddress.c_str()))
 		&& CryptoUtils::isValidSignature(trade.getHash().c_str(), trade.signature.c_str(), trade.senderPublicKey.c_str())
 		&& _local->isBalanceTrade(trade);
 }
@@ -128,8 +129,8 @@ void MetaTradeBlockchainImpl::Mining(){
 
 void MetaTradeBlockchainImpl::MiningBlock(){
 	do{
-		std::unique_lock<std::shared_mutex> ul(_lock);
-		_cond.wait(ul, [this](){
+		std::unique_lock<std::mutex> ul(_lock);
+		_cond.wait(ul, [this]()->bool{
 			if (this->_quit_flag.load()){
 				return true;
 			}
@@ -281,7 +282,7 @@ void MetaTradeBlockchainImpl::ParseChain(cJSON* root, std::vector<metatradenode:
 	for (int i = 0; i < sz; i++) {
 		cJSON* td = cJSON_GetArrayItem(root, i);
 		metatradenode::Block block;
-		ParseBlock(root, block);
+		ParseBlock(td, block);
 		chain.push_back(block);
 	}
 }
@@ -292,7 +293,7 @@ void MetaTradeBlockchainImpl::ParseRawBlocks(cJSON* root, std::deque<metatradeno
 	for (int i = 0; i < sz; i++) {
 		cJSON* td = cJSON_GetArrayItem(root, i);
 		metatradenode::RawBlock raw_block;
-		ParseRawBlock(root, raw_block);
+		ParseRawBlock(td, raw_block);
 		raw_blocks.push_back(raw_block);
 	}
 }
@@ -303,7 +304,7 @@ void MetaTradeBlockchainImpl::ParseTradeList(cJSON* root, std::vector<metatraden
 	for (int i = 0; i < sz; i++) {
 		cJSON* td = cJSON_GetArrayItem(root, i);
 		metatradenode::Trade trade;
-		ParseTrade(root, trade);
+		ParseTrade(td, trade);
 		vec.emplace_back(trade);
 	}
 }
@@ -313,7 +314,7 @@ void MetaTradeBlockchainImpl::ParseTrade(cJSON* root, metatradenode::Trade& trad
 	trade.receiverAddress = cJSON_GetStringValue(cJSON_GetObjectItem(root, "receiverAddress"));
 	trade.amount = cJSON_GetNumberValue(cJSON_GetObjectItem(root, "amount"));
 	trade.commission = cJSON_GetNumberValue(cJSON_GetObjectItem(root, "commission"));
-	trade.timestamp = strtoll(cJSON_GetStringValue(cJSON_GetObjectItem(root, "timestamp")), nullptr, 10);
+	trade.timestamp = cJSON_GetNumberValue(cJSON_GetObjectItem(root, "timestamp"));
 	trade.signature = cJSON_GetStringValue(cJSON_GetObjectItem(root, "signature"));
 	trade.senderPublicKey = cJSON_GetStringValue(cJSON_GetObjectItem(root, "senderPublicKey"));
 	trade.description = cJSON_GetStringValue(cJSON_GetObjectItem(root, "description"));

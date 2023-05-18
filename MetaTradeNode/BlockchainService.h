@@ -10,10 +10,10 @@ namespace metatradenode {
 	public:
 		void RegisterClient(metatradenode::MetaTradeClient* client) { this->_client = client; };
 		void RegisterLocal(metatradenode::LocalService* local) { this->_local = local; };
-		void SendTrade(metatradenode::Trade& trade) = 0;
-		void Mining() = 0;
-		void SendSyncRequest() = 0;
-		virtual ~BlockchainService() = 0;
+		virtual void SendTrade(metatradenode::Trade& trade) = 0;
+		virtual void Mining() = 0;
+		virtual void SendSyncRequest() = 0;
+		virtual ~BlockchainService() {};
 		friend class metatradenode::MetaTradeClient;
 	protected:
 		virtual void Init(webstomppp::StompCallbackMsg msg) { _client->RegisterSubscribe(); };

@@ -27,7 +27,7 @@ namespace metatradenode {
 		int proof;
 		std::vector<Trade> block_body;
 		void calMerkleHash();
-		double getBlockCommision();
+		long getBlockCommision();
 		std::string getHash();
 	};
 }

@@ -6,7 +6,7 @@ LevelDBLocalImpl::LevelDBLocalImpl() {
 	leveldb::Status s;
 	leveldb::Options options;
 	options.create_if_missing = true;
-	s = leveldb::DB::Open(options, "./test.db", &_db);
+	s = leveldb::DB::Open(options, "metatradelocal", &_db);
 	assert(s.ok());
 
 	//load or set 0 -- index
@@ -159,19 +159,26 @@ bool LevelDBLocalImpl::isBalanceTrade(metatradenode::Trade) {
 }
 
 long LevelDBLocalImpl::queryAmount(std::string address, std::string item_id) {
+	long amount = 0;
 	leveldb::Status s;
 	std::string value;
 	s = _db->Get(leveldb::ReadOptions(), Key(address, item_id), &value);
-	if (s.IsNotFound()) {
-		return 0;
+	if (!s.IsNotFound()) {
+		amount += atol(value.c_str());
 	}
-	else {
-		return atol(value.c_str());
+
+	s = _db->Get(leveldb::ReadOptions(), Key(metatradenode::BORADCAST_ADDRESS, item_id), &value);
+	if (!s.IsNotFound()) {
+		amount += atol(value.c_str());
 	}
+	
+	return amount;
 }
 
 void LevelDBLocalImpl::updateIndexLocal(){
 	//update index
+
+	leveldb::Status s;
 	leveldb::WriteBatch batch;
 	batch.Delete(PropertyKey());
 	batch.Put(PropertyKey(), std::to_string(_cur_index));

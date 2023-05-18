@@ -4,8 +4,11 @@
 #include <atomic>
 #include "LocalService.h"
 #include "MetaTradeBlockchainImpl.h"
-#pragma comment(lib , "leveldb.lib")
 
+
+namespace metatradenode {
+	extern const char* BORADCAST_ADDRESS;
+};
 
 class LevelDBLocalImpl : public metatradenode::LocalService {
 private:

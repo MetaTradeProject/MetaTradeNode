@@ -12,6 +12,10 @@
 class LevelDBLocalImpl;
 extern constexpr const char* PropertyKey();
 
+namespace metatradenode {
+	extern const char* BORADCAST_ADDRESS;
+};
+
 class MetaTradeBlockchainImpl : public metatradenode::BlockchainService
 {
 public:
@@ -26,7 +30,7 @@ private:
 	std::deque<metatradenode::RawBlock> _rawblock_deque {};
 	std::vector<metatradenode::Trade> _trade_list {};
 	std::string _wallet_address;
-	std::shared_mutex _lock {};
+	std::mutex _lock {};
 	std::condition_variable _cond {};
 	std::thread* _mining_thread { nullptr };
 	std::atomic<bool> _proof_done { false };
