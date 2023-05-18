@@ -13,7 +13,6 @@ void MetaTradeBlockchainImpl::Init(webstomppp::StompCallbackMsg msg) {
 	}
 	ul.unlock();
 	_local->onLocalSync(this->_chain);
-	this->_chain.clear();
 	BlockchainService::Init(msg);
 }
 
@@ -54,8 +53,7 @@ void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg){
 	}
 	ul.unlock();
 	this->_chain.emplace_back(block);
-	_local->onSemiSync(block);
-	this->_chain.pop_back();
+	_local->onLocalSync(this->_chain);
 }
 
 void MetaTradeBlockchainImpl::onSync(webstomppp::StompCallbackMsg msg) {
@@ -67,7 +65,6 @@ void MetaTradeBlockchainImpl::onSync(webstomppp::StompCallbackMsg msg) {
 	}
 	ul.unlock();
 	_local->onLocalSync(this->_chain);
-	this->_chain.clear();
 }
 
 void MetaTradeBlockchainImpl::onTrade(webstomppp::StompCallbackMsg msg) {
@@ -81,7 +78,7 @@ void MetaTradeBlockchainImpl::onTrade(webstomppp::StompCallbackMsg msg) {
 void MetaTradeBlockchainImpl::onJudge(webstomppp::StompCallbackMsg msg){
 	std::unique_lock<std::mutex> sl(_lock);
 	cJSON* root = cJSON_Parse(msg.body);
-	int proof = cJSON_GetObjectItem(root, "proofLevel")->valueint;
+	int proof = cJSON_GetObjectItem(root, "proof")->valueint;
 
 	if (isValidProof(proof, this->_rawblock_deque.front())) {
 		SendAgreeMessage(proof);
@@ -115,7 +112,7 @@ bool MetaTradeBlockchainImpl::isValidProof(int proof, metatradenode::RawBlock& r
 
 	std::stringstream ss;
 	ss << block.prev_hash << block.merkle_hash << block.proof_level << block.proof;
-	if (CryptoUtils::GetSha256(CryptoUtils::GetSha256(ss.str().c_str()).c_str()) == std::string(block.proof_level, '0')) {
+	if (CryptoUtils::GetSha256(CryptoUtils::GetSha256(ss.str().c_str()).c_str()).substr(0, block.proof_level) == std::string(block.proof_level, '0')) {
 		return true;
 	}
 	else {
@@ -163,7 +160,7 @@ void MetaTradeBlockchainImpl::MiningBlock(){
 
 		std::string target(proof_level, '0');
 		while (true) {
-			std::string guess = mine_data.append(std::to_string(proof));
+			std::string guess = mine_data + std::to_string(proof);
 			if (CryptoUtils::GetSha256(CryptoUtils::GetSha256(guess.c_str()).c_str()).substr(0, proof_level) == target) {
 				break;
 			}
@@ -183,8 +180,7 @@ void MetaTradeBlockchainImpl::SendAgreeMessage(int proof) {
 	cJSON_AddItemToObject(agr_msg, "address", cJSON_CreateString(this->_wallet_address.c_str()));
 	cJSON_AddItemToObject(agr_msg, "proof", cJSON_CreateNumber(proof));
 	
-	webstomppp::StompJsonSendFrame frame(metatradenode::POST_AGREE, cJSON_PrintUnformatted(agr_msg));
-	_client->Send(frame.toRawString().c_str());
+	_client->SendJson(metatradenode::POST_AGREE, cJSON_PrintUnformatted(agr_msg));
 	cJSON_Delete(agr_msg);
 }
 
@@ -192,9 +188,45 @@ void MetaTradeBlockchainImpl::SendSyncRequest(){
 	cJSON* loc_msg = cJSON_CreateObject();
 	cJSON_AddItemToObject(loc_msg, "startIndex", cJSON_CreateNumber(_local->getStartIndex()));
 
-	webstomppp::StompJsonSendFrame frame(metatradenode::POST_SYNC, cJSON_PrintUnformatted(loc_msg));
-	_client->Send(frame.toRawString().c_str());
+	_client->SendJson(metatradenode::POST_SYNC, cJSON_PrintUnformatted(loc_msg));
 	cJSON_Delete(loc_msg);
+}
+
+long long MetaTradeBlockchainImpl::queryAmount(std::string address, std::string item_id) {
+	std::unique_lock<std::mutex> sl(_lock);
+	std::vector<metatradenode::Block> snapshot(this->_chain);
+	sl.unlock();
+
+	bool isCash = true;
+	if (item_id != "0") {
+		isCash = false;
+	}
+
+	long long cur = 0;
+	for (auto& block : snapshot) {
+		auto& trade_list = block.block_body;
+
+		for (auto& trade : trade_list) {
+			const std::string& sender = trade.senderAddress;
+			const std::string& receiver = trade.receiverAddress;
+			
+			if (isCash) {
+				cur += trade.amount;
+			}
+			else {
+				//item
+				auto ptr = cJSON_Parse(trade.description.c_str());
+				std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+				long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+				cJSON_Delete(ptr);
+
+				if (this_item_id == item_id) {
+					cur += amount;
+				}
+			}
+		}
+	}
+	return cur;
 }
 
 void MetaTradeBlockchainImpl::SendTrade(metatradenode::Trade& trade) {
@@ -210,8 +242,7 @@ void MetaTradeBlockchainImpl::SendTrade(metatradenode::Trade& trade) {
 	cJSON_AddItemToObject(trade_msg, "description", cJSON_CreateString(trade.description.c_str()));
 
 
-	webstomppp::StompJsonSendFrame frame(metatradenode::POST_TRADE, cJSON_PrintUnformatted(trade_msg));
-	_client->Send(frame.toRawString().c_str());
+	_client->SendJson(metatradenode::POST_TRADE, cJSON_PrintUnformatted(trade_msg));
 	cJSON_Delete(trade_msg);
 }
 
@@ -242,8 +273,7 @@ void MetaTradeBlockchainImpl::SendProofMessage(metatradenode::Block& block) {
 	cJSON_AddItemToObject(proof_msg, "address", cJSON_CreateString(_wallet_address.c_str()));
 	cJSON_AddItemToObject(proof_msg, "block", block_msg);
 
-	webstomppp::StompJsonSendFrame frame(metatradenode::POST_PROOF, cJSON_PrintUnformatted(proof_msg));
-	_client->Send(frame.toRawString().c_str());
+	_client->SendJson(metatradenode::POST_PROOF, cJSON_PrintUnformatted(proof_msg));
 	cJSON_Delete(proof_msg);
 }
 

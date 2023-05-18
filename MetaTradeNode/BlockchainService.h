@@ -13,6 +13,7 @@ namespace metatradenode {
 		virtual void SendTrade(metatradenode::Trade& trade) = 0;
 		virtual void Mining() = 0;
 		virtual void SendSyncRequest() = 0;
+		virtual long long queryAmount(std::string address, std::string item_id) = 0;
 		virtual ~BlockchainService() {};
 		friend class metatradenode::MetaTradeClient;
 	protected:

@@ -31,11 +31,14 @@ int main() {
 	strcpy_s(cfg.prikey, 65, "123");
 	strcpy_s(cfg.pubkey, 67, "123");
 	strcpy_s(cfg.address, 35, "123");
+	cfg.mining = true;
 	metatradenode::MetaTradeNode node(cfg);
 	node.init();
 	node.run(false);
 
-	Sleep(10000);
+	Sleep(30000);
+
+	std::cout << node.queryAmount("123", "0") << std::endl;
 
 	//view("metatradelocal");
 	return 0;

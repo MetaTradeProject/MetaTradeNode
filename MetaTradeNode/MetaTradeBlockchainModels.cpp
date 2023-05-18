@@ -40,8 +40,8 @@ void metatradenode::Block::calMerkleHash() {
     this->merkle_hash = hashTree.front();
 }
 
-long metatradenode::Block::getBlockCommision(){
-    long sum = 0;
+long long metatradenode::Block::getBlockCommision(){
+    long long sum = 0;
     for (auto& trade : block_body) {
         sum += trade.commission;
     }

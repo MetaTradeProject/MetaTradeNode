@@ -5,9 +5,9 @@ namespace metatradenode {
 	struct Trade {
 		std::string senderAddress;
 		std::string receiverAddress;
-		long amount;
-		long commission;
-		long timestamp;
+		long long amount;
+		long long commission;
+		long long timestamp;
 		std::string signature;
 		std::string senderPublicKey;
 		std::string description;
@@ -27,7 +27,7 @@ namespace metatradenode {
 		int proof;
 		std::vector<Trade> block_body;
 		void calMerkleHash();
-		long getBlockCommision();
+		long long getBlockCommision();
 		std::string getHash();
 	};
 }

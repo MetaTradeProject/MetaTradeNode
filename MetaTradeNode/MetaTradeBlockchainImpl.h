@@ -24,6 +24,7 @@ public:
 	void SendTrade(metatradenode::Trade& trade) override;
 	void Mining() override;
 	void SendSyncRequest() override;
+	long long queryAmount(std::string address, std::string item_id) override;
 	friend class LevelDBLocalImpl;
 private:
 	std::vector<metatradenode::Block> _chain {};

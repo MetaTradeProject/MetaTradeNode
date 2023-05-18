@@ -2,6 +2,7 @@
 #include <leveldb/db.h>
 #include <leveldb/write_batch.h>
 #include <atomic>
+#include <string>
 #include "LocalService.h"
 #include "MetaTradeBlockchainImpl.h"
 
@@ -25,11 +26,10 @@ public:
 		}
 	};
 	void onLocalSync(std::vector<metatradenode::Block>&) override;
-	void onSemiSync(const metatradenode::Block&) override;
 	int getStartIndex() override { return _cur_index.load(); };
 
 	bool isBalanceTrade(metatradenode::Trade) override;
 
-	long queryAmount(std::string address, std::string item_id);
+	long long queryAmount(std::string address, std::string item_id);
 };
 

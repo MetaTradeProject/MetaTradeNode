@@ -30,16 +30,18 @@ void metatradenode::MetaTradeNode::reload(){
     this->_bc_service->SendSyncRequest();
 }
 
-long metatradenode::MetaTradeNode::queryAmount(const char* address, const char* item_id) {
+long long metatradenode::MetaTradeNode::queryAmount(const char* address, const char* item_id) {
     if (_lc_service != nullptr) {
-        return _lc_service->queryAmount(address, item_id);
+        long long prev = _lc_service->queryAmount(address, item_id);
+        long long cur = _bc_service->queryAmount(address, item_id);
+        return prev + cur;
     }
     else {
         return 0;
     }
 }
 
-void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char* item_id, long amount) {
+void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char* item_id, long long amount) {
     std::string item = item_id;
     metatradenode::Trade trade;
     trade.senderAddress = _config.address;

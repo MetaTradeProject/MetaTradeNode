@@ -40,6 +40,7 @@ namespace webstomppp {
 		void Subscribe(const char* destination, webstomppp::callback_func callback);
 		void Unsubscribe(const char* destination);
 		void Send(const char* raw_str);
+		void SendJson(const char* des, const char* content);
 		virtual void OnConnected() {};
 		virtual void OnDisconnected() {};
 	};
