@@ -6,7 +6,7 @@ LevelDBLocalImpl::LevelDBLocalImpl() {
 	leveldb::Status s;
 	leveldb::Options options;
 	options.create_if_missing = true;
-	s = leveldb::DB::Open(options, "metatradelocal", &_db);
+	s = leveldb::DB::Open(options, "local", &_db);
 	assert(s.ok());
 
 	//load or set 0 -- index
