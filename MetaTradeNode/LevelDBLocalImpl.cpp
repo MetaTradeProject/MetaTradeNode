@@ -53,8 +53,14 @@ void LevelDBLocalImpl::onLocalSync(std::vector<metatradenode::Block>& chain){
 			s = _db->Get(leveldb::ReadOptions(), sender_key, &value);
 			if (s.IsNotFound()) {
 				//Put
-				s = _db->Put(leveldb::WriteOptions(), sender_key, std::to_string(-amount));
-				assert(s.ok());
+				if (item_id == "0") {
+					s = _db->Put(leveldb::WriteOptions(), sender_key, std::to_string(-amount - trade.commission));
+					assert(s.ok());
+				}
+				else {
+					s = _db->Put(leveldb::WriteOptions(), sender_key, std::to_string(-amount));
+					assert(s.ok());
+				}
 			}
 			else {
 				//Update
@@ -62,7 +68,13 @@ void LevelDBLocalImpl::onLocalSync(std::vector<metatradenode::Block>& chain){
 
 				leveldb::WriteBatch batch;
 				batch.Delete(sender_key);
-				batch.Put(sender_key, std::to_string(v - amount));
+
+				if (item_id == "0") {
+					batch.Put(sender_key, std::to_string(v - amount - trade.commission));
+				}
+				else {
+					batch.Put(sender_key, std::to_string(v - amount));
+				}
 				s = _db->Write(leveldb::WriteOptions(), &batch);
 				assert(s.ok());
 			}

@@ -15,6 +15,9 @@ namespace metatradenode {
 		bool mining;
 	};
 
+	extern const long long commission_rate;
+	extern const long long commission_item_fix;
+
 	class MetaTradeNode {
 	private:
 		metatradenode::nodeconfig _config;

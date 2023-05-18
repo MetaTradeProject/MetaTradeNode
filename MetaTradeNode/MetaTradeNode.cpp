@@ -46,13 +46,13 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
     metatradenode::Trade trade;
     trade.senderAddress = _config.address;
     trade.receiverAddress = receiver;
-    trade.commission = 500;
     trade.senderPublicKey = _config.pubkey;
     trade.timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     if (item == "0") {
         //cash
         trade.amount = amount;
+        trade.commission = amount / commission_rate;
         trade.description = "";
     }
     else {
@@ -61,6 +61,7 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
         cJSON_AddItemToObject(ptr, "id", cJSON_CreateString(item_id));
         cJSON_AddItemToObject(ptr, "amount", cJSON_CreateNumber(amount));
         trade.amount = 0;
+        trade.commission = commission_item_fix;
         trade.description = cJSON_PrintUnformatted(ptr);
         cJSON_Delete(ptr);
     }

@@ -1,4 +1,6 @@
 namespace metatradenode {
+	const long long commission_rate = 100;
+	const long long commission_item_fix = 500;
 	const char* STOMP_PATH = "ws://47.102.200.110/meta-trade/stomp";
 	const char* BORADCAST_ADDRESS = "*";
 

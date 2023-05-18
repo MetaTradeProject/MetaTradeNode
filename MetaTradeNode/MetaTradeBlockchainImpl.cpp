@@ -209,21 +209,41 @@ long long MetaTradeBlockchainImpl::queryAmount(std::string address, std::string 
 		for (auto& trade : trade_list) {
 			const std::string& sender = trade.senderAddress;
 			const std::string& receiver = trade.receiverAddress;
-			
-			if (isCash) {
-				cur += trade.amount;
-			}
-			else {
-				//item
-				auto ptr = cJSON_Parse(trade.description.c_str());
-				std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
-				long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
-				cJSON_Delete(ptr);
 
-				if (this_item_id == item_id) {
-					cur += amount;
+			if (sender == address) {
+				if (isCash) {
+					cur = cur - trade.amount - trade.commission;
+				}
+				else {
+					//item
+					auto ptr = cJSON_Parse(trade.description.c_str());
+					std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+					long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+					cJSON_Delete(ptr);
+
+					if (this_item_id == item_id) {
+						cur -= amount;
+					}
 				}
 			}
+			
+			if (receiver == address) {
+				if (isCash) {
+					cur = cur + trade.amount;
+				}
+				else {
+					//item
+					auto ptr = cJSON_Parse(trade.description.c_str());
+					std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+					long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+					cJSON_Delete(ptr);
+
+					if (this_item_id == item_id) {
+						cur += amount;
+					}
+				}
+			}
+			
 		}
 	}
 	return cur;
