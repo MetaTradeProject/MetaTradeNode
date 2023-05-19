@@ -21,7 +21,7 @@
 ## 项目依赖
 - [libWebStomp++](https://github.com/Freesia810/WebStomppp)：提供客户端的`Stomp`服务
 - [rmd160](https://homes.esat.kuleuven.be/~bosselae/ripemd160/)：实现`RIPEMD-160`哈希算法加密
-- [picosha2](https://github.com/okdshin/PicoSHA2)：提供SHA-256哈希算法
+- [picosha2](https://github.com/okdshin/PicoSHA2)：提供`SHA-256`哈希算法
 - [cJSON](https://github.com/DaveGamble/cJSON)：提供轻量的`json`序列化与反序列化服务
 - [secp256k1](https://github.com/bitcoin-core/secp256k1)：提供区块链公钥和地址生成的`ECC`算法和公钥压缩算法
 - [leveldb](https://github.com/google/leveldb):提供本地持久化服务KV框架
