@@ -17,6 +17,10 @@
 
 [Local持久化服务接口](#Local持久化服务接口)
 
+## 工具集平台
+`msvc-v143`:`Visual Studio 2022`
+
+如果要进行开发，请确保工作集版本一致性
 
 ## 项目依赖
 - [libWebStomp++](https://github.com/Freesia810/WebStomppp)：提供客户端的`Stomp`服务
