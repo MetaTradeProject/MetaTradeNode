@@ -15,12 +15,16 @@
 
 [Blockchain服务接口](#Blockchain服务接口)
 
+[Local持久化服务接口](#Local持久化服务接口)
+
+
 ## 项目依赖
 - [libWebStomp++](https://github.com/Freesia810/WebStomppp)：提供客户端的`Stomp`服务
 - [rmd160](https://homes.esat.kuleuven.be/~bosselae/ripemd160/)：实现`RIPEMD-160`哈希算法加密
 - [picosha2](https://github.com/okdshin/PicoSHA2)：提供SHA-256哈希算法
 - [cJSON](https://github.com/DaveGamble/cJSON)：提供轻量的`json`序列化与反序列化服务
 - [secp256k1](https://github.com/bitcoin-core/secp256k1)：提供区块链公钥和地址生成的`ECC`算法和公钥压缩算法
+- [leveldb](https://github.com/google/leveldb):提供本地持久化服务KV框架
 
 程序运行时依赖这些`dll`，请将它们放在`exe`文件的同一目录下，否则程序无法正常运行
 
@@ -86,3 +90,7 @@
 - `virtual onSync(msg)`：客户端收到网关的`Sync`消息时，会进行回调
 
 具体的消息广播机制和发送机制请参阅[MetaTrade Gateway](https://github.com/Freesia810/MetaTradeGateway)的文档部分
+
+## 本地化持久服务
+### Local服务接口
+由于区块链是基于UTXO
