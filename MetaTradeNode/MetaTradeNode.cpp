@@ -50,6 +50,10 @@ long long metatradenode::MetaTradeNode::queryTransitAmount(const char* address, 
     }
 }
 
+void metatradenode::MetaTradeNode::queryBills(const char* address, metatradenode::Bill** bills, uint64_t* sz){
+    _lc_service->queryBills(address, bills, sz);
+}
+
 void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char* item_id, long long amount) {
     std::string item = item_id;
     metatradenode::Trade trade;
