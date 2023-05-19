@@ -98,7 +98,7 @@
 - 区块链`Amount`:代表当前`Blockchain`服务中的`Block`中计算的`Amount`，`MetatradeNode`总会保证`Blockchain`服务中拥有至少一个`Block`，便于`Mining`服务实现
 - `Transit Amount`:通过`Raw Block`和`Trade List`计算的`Amount`，不代表最终成交，仅供参考，且不保证同步
 
-具体的消息广播机制和发送机制请参阅[MetaTrade Gateway](https://github.com/Freesia810/MetaTradeGateway)的文档部分
+具体的`Mining`原理，消息广播机制和发送机制请参阅[MetaTrade Gateway](https://github.com/Freesia810/MetaTradeGateway)的文档部分
 
 ## 本地化持久服务
 ### Local持久化服务接口
