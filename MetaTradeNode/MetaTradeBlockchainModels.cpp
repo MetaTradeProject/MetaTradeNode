@@ -6,7 +6,7 @@
 
 std::string metatradenode::Trade::getHash() {
     std::stringstream ss;
-    ss << senderAddress << receiverAddress << amount << commission << timestamp;
+    ss << senderAddress << receiverAddress << amount << commission << timestamp << description;
     return CryptoUtils::GetSha256(ss.str().c_str());
 }
 
