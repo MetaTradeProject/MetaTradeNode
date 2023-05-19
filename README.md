@@ -23,7 +23,7 @@
 - [rmd160](https://homes.esat.kuleuven.be/~bosselae/ripemd160/)：实现`RIPEMD-160`哈希算法加密
 - [picosha2](https://github.com/okdshin/PicoSHA2)：提供`SHA-256`哈希算法
 - [cJSON](https://github.com/DaveGamble/cJSON)：提供轻量的`json`序列化与反序列化服务
-- [secp256k1](https://github.com/bitcoin-core/secp256k1)：提供区块链公钥和地址生成的`ECC`算法和公钥压缩算法
+- [secp256k1](https://github.com/bitcoin-core/secp256k1)：提供区块链公钥和地址生成的`ECC`算法和公钥压缩，签名和验证算法
 - [leveldb](https://github.com/google/leveldb):提供本地持久化服务KV框架
 
 程序运行时依赖这些`dll`，请将它们放在`exe`文件的同一目录下，否则程序无法正常运行
