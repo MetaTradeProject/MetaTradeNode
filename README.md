@@ -79,15 +79,21 @@
 `MetaTrade Node`为所有的区块链不同实现提供了统一的客户端注册接口，任何自定义的区块链实现都需要继承`BlockChainService`抽象类：
 
 - `RegisterClient(client)`：注册对应的客户端实例
-- `virtual Init(msg)`：客户端收到网关的`Init`消息时，会回调该接口，在该接口中，应该实现区块链数据结构的初始化等工作
+- `Init(msg)`：客户端收到网关的`Init`消息时，会回调该接口，在该接口中，应该实现区块链数据结构的初始化等工作
 注：在`Service`中该函数已经实现，请子类`override`时务必在最后调用抽象类的该函数.
 
-- `virtual Stop()`: 断开连接时回调接口，进行数据结构的存储和析构工作
-- `virtual onTrade(msg)`：客户端收到网关的`Trade`消息时，会进行回调
-- `virtual onSpawn(msg)`：客户端收到网关的`Spawn`消息时，会进行回调
-- `virtual onJudge(msg)`：客户端收到网关的`Judge`消息时，会进行回调
-- `virtual onSemiSync(msg)`：客户端收到网关的`SemiSync`消息时，会进行回调
-- `virtual onSync(msg)`：客户端收到网关的`Sync`消息时，会进行回调
+- `vStop()`: 断开连接时回调接口，进行数据结构的存储和析构工作
+- `onTrade(msg)`：客户端收到网关的`Trade`消息时，会进行回调
+- `onSpawn(msg)`：客户端收到网关的`Spawn`消息时，会进行回调
+- `onJudge(msg)`:客户端收到网关的`Judge`消息时，会进行回调
+- `onSemiSync(msg)`：客户端收到网关的`SemiSync`消息时，会进行回调
+- `onSync(msg)`：客户端收到网关的`Sync`消息时，会进行回调
+- `queryAmount/queryTransitAmount()`: 为上层提供`Blockchain`级别的余额查询
+
+事实上，`MetatradeNode`中的`Amount`概念存在三个部分:
+- 本地`Amount`:代表以及在本地化服务中持久化的`Block`中计算的`Amount`
+- 区块链`Amount`:代表当前`Blockchain`服务中的`Block`中计算的`Amount`，`MetatradeNode`总会保证`Blockchain`服务中拥有至少一个`Block`，便于`Mining`服务实现
+- `Transit Amount`:通过`Raw Block`和`Trade List`计算的`Amount`，不代表最终成交，仅供参考，且不保证同步
 
 具体的消息广播机制和发送机制请参阅[MetaTrade Gateway](https://github.com/Freesia810/MetaTradeGateway)的文档部分
 
@@ -96,4 +102,4 @@
 由于区块链是基于UTXO的数据结构，因此在本地化需要同步基于余额的持久化服务，持久化服务应该实现以下接口：
 - `onLocalSync()`: 收到`Blockchain`的同步消息时，对当前本地化持久服务进行更新，保证交易信息的准时和正确性
 - `getStartIndex()`: 为`Blockchain`提供本地化服务的最新状态，以保证`Blockchain`在此状态基础上进行同步和协调
-- `queryAmount()`: 为上层提供上链余额查询接口，余额不仅包括`Coin`，支持任意`item`的本地化查询
+- `queryAmount()`: 为上层提供本地化余额查询接口，余额不仅包括`Coin`，支持任意`item`的本地化查询
