@@ -92,5 +92,5 @@
 具体的消息广播机制和发送机制请参阅[MetaTrade Gateway](https://github.com/Freesia810/MetaTradeGateway)的文档部分
 
 ## 本地化持久服务
-### Local服务接口
+### Local持久化服务接口
 由于区块链是基于UTXO
