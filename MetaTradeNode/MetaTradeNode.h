@@ -36,6 +36,7 @@ namespace metatradenode {
 		void reload();
 		void run(bool sync = true);
 		long long queryAmount(const char* address, const char* item_id);
+		long long queryTransitAmount(const char* address, const char* item_id);
 		void submitTrade(const char* receiver, const char* item_id, long long amount);
 	};
 

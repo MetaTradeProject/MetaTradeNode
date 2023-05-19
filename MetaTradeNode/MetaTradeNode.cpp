@@ -40,6 +40,16 @@ long long metatradenode::MetaTradeNode::queryAmount(const char* address, const c
     }
 }
 
+long long metatradenode::MetaTradeNode::queryTransitAmount(const char* address, const char* item_id){
+    if (_bc_service != nullptr) {
+        long long cur = _bc_service->queryTransitAmount(address, item_id);
+        return cur;
+    }
+    else {
+        return 0;
+    }
+}
+
 void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char* item_id, long long amount) {
     std::string item = item_id;
     metatradenode::Trade trade;
