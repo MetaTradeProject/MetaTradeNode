@@ -88,6 +88,9 @@
 - `onJudge(msg)`:客户端收到网关的`Judge`消息时，会进行回调
 - `onSemiSync(msg)`：客户端收到网关的`SemiSync`消息时，会进行回调
 - `onSync(msg)`：客户端收到网关的`Sync`消息时，会进行回调
+- `SendTrade()`: 为上层提供支付接口
+- `SendSyncRequest()`:为上层提供同步接口，即上层主动向网关发送同步消息
+- `Mining()`：为上层提供
 - `queryAmount/queryTransitAmount()`: 为上层提供`Blockchain`级别的余额查询
 
 事实上，`MetatradeNode`中的`Amount`概念存在三个部分:
