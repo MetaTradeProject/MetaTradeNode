@@ -1,5 +1,5 @@
 # MetaTrade Node
-`MetaTrade Gateway`网关服务的本地客户端实现
+`MetaTrade Gateway`网关服务的本地服务及持久化实现
 # 目录
 [项目依赖](#项目依赖)
 
@@ -96,3 +96,4 @@
 由于区块链是基于UTXO的数据结构，因此在本地化需要同步基于余额的持久化服务，持久化服务应该实现以下接口：
 - `onLocalSync()`: 收到`Blockchain`的同步消息时，对当前本地化持久服务进行更新，保证交易信息的准时和正确性
 - `getStartIndex()`: 为`Blockchain`提供本地化服务的最新状态，以保证`Blockchain`在此状态基础上进行同步和协调
+- `queryAmount()`: 为上层提供上链余额查询接口，余额不仅包括`Coin`，支持任意`item`的本地化查询
