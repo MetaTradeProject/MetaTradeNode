@@ -6,7 +6,7 @@ constexpr const char* level_db_name = "local";
 constexpr const char* sql_db_name = "LocalBills.db";
 constexpr const char* create_tb_sql = "create table bill(sender TEXT, receiver TEXT, id TEXT, amount BIGINT, commission BIGINT, timestamp UNSIGNED BIG INT)";
 constexpr const char* insert_td_sql = "insert into bill VALUES ('%s', '%s', '%s', %lld, %lld, %lld)";
-constexpr const char* select_td_sql = "select * from bill where sender = '%s' OR receiver = '%s";
+constexpr const char* select_td_sql = "select * from bill where sender = '%s' OR receiver = '%s OR receiver = '*'";
 
 LevelDBLocalImpl::LevelDBLocalImpl() {
 	leveldb::Status s;
