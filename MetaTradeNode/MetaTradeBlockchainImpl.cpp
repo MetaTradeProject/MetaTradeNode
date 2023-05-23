@@ -7,7 +7,7 @@
 void MetaTradeBlockchainImpl::Init(webstomppp::StompCallbackMsg msg) {
 	std::unique_lock<std::mutex> ul(_lock);
 	ParseSyncMessage(msg.body);
-	if(this->_rawblock_deque.size() != 0){
+	if(this->enableMining && this->_rawblock_deque.size() != 0){
 		this->_proof_done.store(false);
 		_cond.notify_one();
 	}
@@ -36,7 +36,7 @@ void MetaTradeBlockchainImpl::onSpawn(webstomppp::StompCallbackMsg msg) {
 	{
 		std::unique_lock<std::mutex> ul(_lock);
 		this->_rawblock_deque.push_back(raw_block);
-		if(this->_rawblock_deque.size() != 0){
+		if(this->enableMining && this->_rawblock_deque.size() != 0){
 			this->_proof_done.store(false);
 			_cond.notify_one();
 		}
@@ -47,7 +47,7 @@ void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg){
 	std::unique_lock<std::mutex> ul(_lock);
 	metatradenode::Block block;
 	ParseSemiSyncMessage(msg.body, block);
-	if(this->_rawblock_deque.size() != 0){
+	if(this->enableMining && this->_rawblock_deque.size() != 0){
 		this->_proof_done.store(false);
 		_cond.notify_one();
 	}
@@ -59,7 +59,7 @@ void MetaTradeBlockchainImpl::onSemiSync(webstomppp::StompCallbackMsg msg){
 void MetaTradeBlockchainImpl::onSync(webstomppp::StompCallbackMsg msg) {
 	std::unique_lock<std::mutex> ul(_lock);
 	ParseSyncMessage(msg.body);
-	if(this->_rawblock_deque.size() != 0){
+	if(this->enableMining && this->_rawblock_deque.size() != 0){
 		this->_proof_done.store(false);
 		_cond.notify_one();
 	}
@@ -121,6 +121,7 @@ bool MetaTradeBlockchainImpl::isValidProof(int proof, metatradenode::RawBlock& r
 }
 
 void MetaTradeBlockchainImpl::Mining(){
+	this->enableMining = true;
 	this->_mining_thread = new std::thread(&MetaTradeBlockchainImpl::MiningBlock, this);
 }
 
@@ -227,7 +228,7 @@ long long MetaTradeBlockchainImpl::queryAmount(std::string address, std::string 
 				}
 			}
 			
-			if (receiver == address) {
+			if (receiver == address || receiver == metatradenode::BORADCAST_ADDRESS) {
 				if (isCash) {
 					cur = cur + trade.amount;
 				}
@@ -346,6 +347,125 @@ long long MetaTradeBlockchainImpl::queryTransitAmount(std::string address, std::
 	}
 
 	return cur;
+}
+
+void MetaTradeBlockchainImpl::queryBills(std::string address, std::vector<metatradenode::Bill>& bills){
+	std::unique_lock<std::mutex> sl(_lock);
+	std::vector<metatradenode::Block> snapshot(this->_chain);
+	sl.unlock();
+
+
+
+	for (auto& block : snapshot) {
+		auto& trade_list = block.block_body;
+
+		for (auto& trade : trade_list) {
+			const std::string& sender = trade.senderAddress;
+			const std::string& receiver = trade.receiverAddress;
+
+			if (sender == address || receiver == address || receiver == metatradenode::BORADCAST_ADDRESS) {
+				auto bill = metatradenode::Bill();
+				strcpy_s(bill.sender, 35, sender.c_str());
+				strcpy_s(bill.receiver, 35, receiver.c_str());
+
+				if (trade.amount != 0) {
+					strcpy_s(bill.id, 10, "0");
+					bill.amount = trade.amount;
+				}
+				else {
+					//item
+					auto ptr = cJSON_Parse(trade.description.c_str());
+					std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+					long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+					cJSON_Delete(ptr);
+
+					bill.amount = amount;
+					strcpy_s(bill.id, 10, this_item_id.c_str());
+				}
+					
+				bill.commission = trade.commission;
+				bill.timestamp = trade.timestamp;
+
+				bills.push_back(bill);
+			}
+
+		}
+	}
+}
+
+void MetaTradeBlockchainImpl::queryTransitBills(std::string address, std::vector<metatradenode::Bill>& bills){
+	std::unique_lock<std::mutex> sl(_lock);
+	auto rb_snapshot(this->_rawblock_deque);
+	auto td_snapshot(this->_trade_list);
+	sl.unlock();
+
+	for (auto& raw_block : rb_snapshot) {
+		auto& trade_list = raw_block.block_body;
+
+		for (auto& trade : trade_list) {
+			const std::string& sender = trade.senderAddress;
+			const std::string& receiver = trade.receiverAddress;
+
+			if (sender == address || receiver == address || receiver == metatradenode::BORADCAST_ADDRESS) {
+				auto bill = metatradenode::Bill();
+				strcpy_s(bill.sender, 35, sender.c_str());
+				strcpy_s(bill.receiver, 35, receiver.c_str());
+
+				if (trade.amount != 0) {
+					strcpy_s(bill.id, 10, "0");
+					bill.amount = trade.amount;
+				}
+				else {
+					//item
+					auto ptr = cJSON_Parse(trade.description.c_str());
+					std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+					long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+					cJSON_Delete(ptr);
+
+					bill.amount = amount;
+					strcpy_s(bill.id, 10, this_item_id.c_str());
+				}
+
+				bill.commission = trade.commission;
+				bill.timestamp = trade.timestamp;
+
+				bills.push_back(bill);
+			}
+
+		}
+	}
+
+	for (auto& trade : td_snapshot) {
+		const std::string& sender = trade.senderAddress;
+		const std::string& receiver = trade.receiverAddress;
+
+		if (sender == address || receiver == address || receiver == metatradenode::BORADCAST_ADDRESS) {
+			auto bill = metatradenode::Bill();
+			strcpy_s(bill.sender, 35, sender.c_str());
+			strcpy_s(bill.receiver, 35, receiver.c_str());
+
+			if (trade.amount != 0) {
+				strcpy_s(bill.id, 10, "0");
+				bill.amount = trade.amount;
+			}
+			else {
+				//item
+				auto ptr = cJSON_Parse(trade.description.c_str());
+				std::string this_item_id = cJSON_GetStringValue(cJSON_GetObjectItem(ptr, "id"));
+				long long amount = cJSON_GetNumberValue(cJSON_GetObjectItem(ptr, "amount"));
+				cJSON_Delete(ptr);
+
+				bill.amount = amount;
+				strcpy_s(bill.id, 10, this_item_id.c_str());
+			}
+
+			bill.commission = trade.commission;
+			bill.timestamp = trade.timestamp;
+
+			bills.push_back(bill);
+		}
+
+	}
 }
 
 void MetaTradeBlockchainImpl::SendTrade(metatradenode::Trade& trade) {

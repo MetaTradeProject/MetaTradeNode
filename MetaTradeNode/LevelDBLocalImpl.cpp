@@ -155,7 +155,7 @@ long long LevelDBLocalImpl::queryAmount(std::string address, std::string item_id
 	return amount;
 }
 
-void LevelDBLocalImpl::queryBills(std::string address, metatradenode::Bill** bills, uint64_t* sz){
+void LevelDBLocalImpl::queryBills(std::string address, std::vector<metatradenode::Bill>& bills){
 	char sql_buf[256];
 	sprintf_s(sql_buf, 256, select_td_sql, address.c_str(), address.c_str());
 
@@ -167,19 +167,16 @@ void LevelDBLocalImpl::queryBills(std::string address, metatradenode::Bill** bil
 
 	int result = sqlite3_get_table(_sdb, sql_buf, &azResult, &nRow, &nCol, &errMsg);
 
-	bills = new metatradenode::Bill * [nRow];
-	*sz = nRow;
-
 	int idx = nCol;
 	for (int i = 0; i < nRow; i++) {
-		bills[i] = new metatradenode::Bill();
-		strcpy_s(bills[i]->sender, 35, azResult[idx]);
-		strcpy_s(bills[i]->receiver, 35, azResult[idx + 1]);
-		strcpy_s(bills[i]->id, 10, azResult[idx + 2]);
-		bills[i]->amount = atoll(azResult[idx + 3]);
-		bills[i]->commission = atoll(azResult[idx + 4]);
-		bills[i]->timestamp = atoll(azResult[idx + 5]);
-
+		auto bill = metatradenode::Bill();
+		strcpy_s(bill.sender, 35, azResult[idx]);
+		strcpy_s(bill.receiver, 35, azResult[idx + 1]);
+		strcpy_s(bill.id, 10, azResult[idx + 2]);
+		bill.amount = atoll(azResult[idx + 3]);
+		bill.commission = atoll(azResult[idx + 4]);
+		bill.timestamp = atoll(azResult[idx + 5]);
+		bills.push_back(bill);
 		idx += nCol;
 	}
 	

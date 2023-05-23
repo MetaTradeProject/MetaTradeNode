@@ -38,6 +38,7 @@ namespace metatradenode {
 		long long queryAmount(const char* address, const char* item_id);
 		long long queryTransitAmount(const char* address, const char* item_id);
 		void queryBills(const char* address, metatradenode::Bill** bills, uint64_t* sz);
+		void queryTransitBills(const char* address, metatradenode::Bill** bills, uint64_t* sz);
 		void submitTrade(const char* receiver, const char* item_id, long long amount);
 	};
 

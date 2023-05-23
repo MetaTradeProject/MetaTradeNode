@@ -36,6 +36,6 @@ public:
 	bool isBalanceTrade(metatradenode::Trade) override;
 
 	long long queryAmount(std::string address, std::string item_id) override;
-	void queryBills(std::string address, metatradenode::Bill** bills, uint64_t* sz) override;
+	void queryBills(std::string address, std::vector<metatradenode::Bill>& bills) override;
 };
 

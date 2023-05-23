@@ -15,6 +15,8 @@ namespace metatradenode {
 		virtual void SendSyncRequest() = 0;
 		virtual long long queryAmount(std::string address, std::string item_id) = 0;
 		virtual long long queryTransitAmount(std::string address, std::string item_id) = 0;
+		virtual void queryBills(std::string address, std::vector<metatradenode::Bill>& bills) = 0;
+		virtual void queryTransitBills(std::string address, std::vector<metatradenode::Bill>& bills) = 0;
 		virtual ~BlockchainService() {};
 		friend class metatradenode::MetaTradeClient;
 	protected:

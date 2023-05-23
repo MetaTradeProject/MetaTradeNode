@@ -22,6 +22,7 @@ void metatradenode::MetaTradeNode::run(bool sync){
     }
     else {
         _client->RunAsync();
+        Sleep(1500);
     }
 }
 
@@ -51,7 +52,34 @@ long long metatradenode::MetaTradeNode::queryTransitAmount(const char* address, 
 }
 
 void metatradenode::MetaTradeNode::queryBills(const char* address, metatradenode::Bill** bills, uint64_t* sz){
-    _lc_service->queryBills(address, bills, sz);
+    std::vector<metatradenode::Bill> bills_vec;
+    _lc_service->queryBills(address, bills_vec);
+    _bc_service->queryBills(address, bills_vec);
+    
+    *bills = new metatradenode::Bill[sizeof(metatradenode::Bill)];
+    if (!bills_vec.empty()) {
+        memcpy(*bills, &bills_vec[0], bills_vec.size() * sizeof(metatradenode::Bill));
+        *sz = bills_vec.size();
+    }
+    else {
+        *sz = 0;
+        *bills = nullptr;
+    }
+}
+
+void metatradenode::MetaTradeNode::queryTransitBills(const char* address, metatradenode::Bill** bills, uint64_t* sz){
+    std::vector<metatradenode::Bill> bills_vec;
+    _bc_service->queryTransitBills(address, bills_vec);
+
+    *bills = new metatradenode::Bill[sizeof(metatradenode::Bill)];
+    if (!bills_vec.empty()) {
+        memcpy(*bills, &bills_vec[0], bills_vec.size() * sizeof(metatradenode::Bill));
+        *sz = bills_vec.size();
+    }
+    else {
+        *sz = 0;
+        *bills = nullptr;
+    }
 }
 
 void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char* item_id, long long amount) {

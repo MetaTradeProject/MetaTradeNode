@@ -26,6 +26,8 @@ public:
 	void SendSyncRequest() override;
 	long long queryAmount(std::string address, std::string item_id) override;
 	long long queryTransitAmount(std::string address, std::string item_id) override;
+	void queryBills(std::string address, std::vector<metatradenode::Bill>& bills) override;
+	void queryTransitBills(std::string address, std::vector<metatradenode::Bill>& bills) override;
 	friend class LevelDBLocalImpl;
 private:
 	std::vector<metatradenode::Block> _chain {};
@@ -37,6 +39,7 @@ private:
 	std::thread* _mining_thread { nullptr };
 	std::atomic<bool> _proof_done { false };
 	std::atomic<bool> _quit_flag { false };
+	bool enableMining{ false };
 
 	void ParseSyncMessage(const char* raw);
 	void ParseSemiSyncMessage(const char* raw, metatradenode::Block& block);

@@ -16,4 +16,5 @@ void view(std::string name) {
 	}
 	assert(it->status().ok());  // Check for any errors found during the scan
 	delete it;
+	
 }
