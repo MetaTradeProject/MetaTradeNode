@@ -7,18 +7,20 @@
 #include "MetaTradeBlockchainModels.h"
 #include "CryptoUtils.h"
 
+
+
 namespace metatradenode {
 	const long long commission_rate = 100;
 	const long long commission_item_fix = 500;
 
-	struct nodeconfig {
+	struct META_NODE_PUBLIC nodeconfig {
 		char prikey[65];
 		char pubkey[67];
 		char address[35];
 		bool mining;
 	};
 
-	class MetaTradeNode {
+	class META_NODE_PUBLIC MetaTradeNode {
 	private:
 		metatradenode::nodeconfig _config;
 		metatradenode::MetaTradeClient* _client{ nullptr };

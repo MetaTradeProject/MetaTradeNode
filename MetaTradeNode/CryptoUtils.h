@@ -26,11 +26,23 @@
 #error "Couldn't identify the OS"
 #endif
 
+
+#if !defined(__WINDOWS__) && (defined(WIN32) || defined(WIN64) || defined(_MSC_VER) || defined(_WIN32))
+#define __WINDOWS__
+#endif
+
+#ifdef __WINDOWS__
+#define META_NODE_PUBLIC   __declspec(dllexport)
+#else
+#define META_NODE_PUBLIC 
+#endif
+
+
 namespace metatradenode {
 	extern const char* NETWORK_VERSION;
 }
 
-class CryptoUtils {
+class META_NODE_PUBLIC CryptoUtils {
 	/*
 		Private key: random --> sha256(random)
 	*/

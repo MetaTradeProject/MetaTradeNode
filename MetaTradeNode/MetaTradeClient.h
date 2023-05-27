@@ -28,7 +28,7 @@ namespace metatradenode {
 			SUB_ALL,
 			FINISHED
 		};
-		MetaTradeClient() : _status(Status::BORN), _bc_service(nullptr), _local_service(nullptr), _async_thread(nullptr) {};
+		MetaTradeClient() : webstomppp::WebStompClient(true), _status(Status::BORN), _bc_service(nullptr), _local_service(nullptr), _async_thread(nullptr) {};
 		~MetaTradeClient();
 		void RegisterService(metatradenode::BlockchainService* service1, metatradenode::LocalService* service2) { this->_bc_service = service1; this->_local_service = service2; };
 		void RunSync();
