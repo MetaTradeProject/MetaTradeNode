@@ -23,8 +23,10 @@ int main() {
 	strcpy_s(cfg.pubkey, 67, "033362df4159d66739ad7d551e1691396568f956f6e3543fc5c981a2de9416ce25");
 	strcpy_s(cfg.address, 35, "1HtPYxr6vXPwMJbhvHWkUdjkGagJVSdasc");
 	cfg.mining = false;
+	cfg.force = true;
+	cfg.publisher = nullptr;
 	metatradenode::MetaTradeNode node(cfg);
-	node.init(true);
+	node.init();
 	node.run();
 
 	////Sleep(3000);

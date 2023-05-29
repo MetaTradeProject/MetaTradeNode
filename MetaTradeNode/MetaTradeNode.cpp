@@ -5,8 +5,8 @@
 constexpr const char* level_db_name = "local";
 constexpr const char* sql_db_name = "LocalBills.db";
 
-void metatradenode::MetaTradeNode::init(bool force){
-    if (force)
+void metatradenode::MetaTradeNode::init(){
+    if (_config.force)
         ClearLocalTemp();
 
     _client = new metatradenode::MetaTradeClient();
@@ -16,6 +16,7 @@ void metatradenode::MetaTradeNode::init(bool force){
     _client->RegisterService(_bc_service, _lc_service);
     _bc_service->RegisterClient(_client);
     _bc_service->RegisterLocal(_lc_service);
+    _bc_service->RegisterPublisher(_config.publisher);
 }
 
 void metatradenode::MetaTradeNode::run(bool sync){

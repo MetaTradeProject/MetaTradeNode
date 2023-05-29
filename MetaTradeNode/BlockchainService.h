@@ -2,6 +2,7 @@
 #include <webstomp++/WebStompType.h>
 #include "MetaTradeClient.h"
 #include "MetaTradeBlockchainModels.h"
+#include "MiningPublisher.h"
 #pragma comment(lib , "cJSON.lib")
 
 namespace metatradenode {
@@ -10,6 +11,7 @@ namespace metatradenode {
 	public:
 		void RegisterClient(metatradenode::MetaTradeClient* client) { this->_client = client; };
 		void RegisterLocal(metatradenode::LocalService* local) { this->_local = local; };
+		void RegisterPublisher(metatradenode::MiningPublisher* publisher) { this->_publisher = publisher; };
 		virtual void SendTrade(metatradenode::Trade& trade) = 0;
 		virtual void Mining() = 0;
 		virtual void SendSyncRequest() = 0;
@@ -29,6 +31,7 @@ namespace metatradenode {
 		virtual void Stop() = 0;
 		metatradenode::MetaTradeClient* _client;
 		metatradenode::LocalService* _local;
-		BlockchainService() :_client(nullptr), _local(nullptr) {};
+		metatradenode::MiningPublisher* _publisher;
+		BlockchainService() :_client(nullptr), _local(nullptr), _publisher(nullptr) {};
 	};
 }

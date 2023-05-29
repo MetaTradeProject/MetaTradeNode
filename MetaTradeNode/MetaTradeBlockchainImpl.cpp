@@ -144,6 +144,10 @@ void MetaTradeBlockchainImpl::MiningBlock(){
 		auto& raw_block = this->_rawblock_deque.front();
 		ul.unlock();
 
+		//notify mining start
+		if (this->_publisher != nullptr)
+			this->_publisher->PublishStart(raw_block.proof_level);
+
 		metatradenode::Block block;
 		for (auto& trade : raw_block.block_body) {
 			if (isValidTrade(trade)) {
@@ -172,6 +176,10 @@ void MetaTradeBlockchainImpl::MiningBlock(){
 		block.proof = proof;
 		SendProofMessage(block);
 		_proof_done.store(true);
+
+		//notify mining done
+		if(this->_publisher != nullptr)
+			this->_publisher->PublishFinished(proof);
 	}
 	while(true);
 }

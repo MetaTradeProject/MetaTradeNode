@@ -18,6 +18,8 @@ namespace metatradenode {
 		char pubkey[67];
 		char address[35];
 		bool mining;
+		bool force;
+		metatradenode::MiningPublisher* publisher;
 	};
 
 	class META_NODE_PUBLIC MetaTradeNode {
@@ -35,7 +37,7 @@ namespace metatradenode {
 		MetaTradeNode(const MetaTradeNode&) = delete;
 		~MetaTradeNode();
 
-		void init(bool force = false);
+		void init();
 		void reload();
 		void run(bool sync = true);
 		long long queryAmount(const char* address, const char* item_id);
