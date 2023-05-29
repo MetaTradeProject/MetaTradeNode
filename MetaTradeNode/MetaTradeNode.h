@@ -26,6 +26,7 @@ namespace metatradenode {
 		metatradenode::MetaTradeClient* _client{ nullptr };
 		metatradenode::BlockchainService* _bc_service{ nullptr };
 		metatradenode::LocalService* _lc_service{ nullptr };
+		void ClearLocalTemp();
 	public:
 		MetaTradeNode(metatradenode::nodeconfig& config) : _config(config) {};
 
@@ -34,7 +35,7 @@ namespace metatradenode {
 		MetaTradeNode(const MetaTradeNode&) = delete;
 		~MetaTradeNode();
 
-		void init();
+		void init(bool force = false);
 		void reload();
 		void run(bool sync = true);
 		long long queryAmount(const char* address, const char* item_id);

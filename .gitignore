@@ -6,3 +6,5 @@ build/
 *.vcxproj
 *.vcxproj.*
 *.sln
+MetaTradeNode/local/
+*.db

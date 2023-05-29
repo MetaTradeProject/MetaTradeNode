@@ -24,7 +24,7 @@ int main() {
 	strcpy_s(cfg.address, 35, "1HtPYxr6vXPwMJbhvHWkUdjkGagJVSdasc");
 	cfg.mining = false;
 	metatradenode::MetaTradeNode node(cfg);
-	node.init();
+	node.init(true);
 	node.run();
 
 	////Sleep(3000);

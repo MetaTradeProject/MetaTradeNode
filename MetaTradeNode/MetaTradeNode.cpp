@@ -1,7 +1,14 @@
 #include "MetaTradeNode.h"
 #include <chrono>
+#include <filesystem>
 
-void metatradenode::MetaTradeNode::init(){
+constexpr const char* level_db_name = "local";
+constexpr const char* sql_db_name = "LocalBills.db";
+
+void metatradenode::MetaTradeNode::init(bool force){
+    if (force)
+        ClearLocalTemp();
+
     _client = new metatradenode::MetaTradeClient();
     _bc_service = new MetaTradeBlockchainImpl(_config.address);
     _lc_service = new LevelDBLocalImpl();
@@ -111,6 +118,11 @@ void metatradenode::MetaTradeNode::submitTrade(const char* receiver, const char*
     CryptoUtils::SignTrade(trade.getHash().c_str(), _config.prikey, signature);
     trade.signature = signature;
     _bc_service->SendTrade(trade);
+}
+
+void metatradenode::MetaTradeNode::ClearLocalTemp(){
+    std::filesystem::remove_all(level_db_name);
+    std::filesystem::remove(sql_db_name);
 }
 
 metatradenode::MetaTradeNode::~MetaTradeNode(){
