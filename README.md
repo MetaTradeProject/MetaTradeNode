@@ -98,7 +98,7 @@
 - `queryAmount/queryTransitAmount()`: 为上层提供`Blockchain`级别的余额查询
 
 事实上，`MetatradeNode`中的`Amount`概念存在三个部分:
-- 本地`Amount`:代表以及在本地化服务中持久化的`Block`中计算的`Amount`
+- 本地`Amount`:代表已经在本地化服务中持久化的`Block`中计算的`Amount`
 - 区块链`Amount`:代表当前`Blockchain`服务中的`Block`中计算的`Amount`，`MetatradeNode`总会保证`Blockchain`服务中拥有至少一个`Block`，便于`Mining`服务实现
 - `Transit Amount`:通过`Raw Block`和`Trade List`计算的`Amount`，不代表最终成交，仅供参考，且不保证同步
 
